@@ -88,12 +88,18 @@
 				}).error(function (data, status) {
 					console.log("And we just got hit by a " + status + " !!!");
 				});
-			$http.get("http://alpha61.com/ethereum.json")
-				.success(function (data) {
-					if (data) {
-						$scope.network.blockTime = data.ethereumStats.blockTime;
-						$scope.network.hashrate = (data.ethereumStats.difficulty / data.ethereumStats.blockTime) / 1e9;
+			$http.get("https://etherchain.org/api/basic_stats")
+				.success(function (resp) {
+					var sumBlocktime = 0;
+					var sumDifficulty = 0;
+					var arrayLength= resp.data.blocks.length;
+					for (var i = 0; i < arrayLength; i++) {
+						sumBlocktime += resp.data.blocks[i].blockTime;
+						sumDifficulty += resp.data.blocks[i].difficulty;
 					}
+					// Calculate average
+					$scope.network.blockTime = sumBlocktime / arrayLength;
+					$scope.network.hashrate = 1e-9 * sumDifficulty / arrayLength;
 				}).error(function (data, status) {
 					console.log("And we just got hit by a " + status + " HTTP status !!!");
 					//DEV

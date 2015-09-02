@@ -184,9 +184,6 @@
 <script src="./src/calculator/Calculator.js"></script>
 <script src="./src/calculator/HomeCtrl.js"></script>
 
-<!-- TODO http.get call -->
-<script src="./assets/json/gpus.json"></script>
-
 <!--<script src="./bower_components/material-design-icons/action/svg/production/ic_help_48px.svg"></script>-->
 
 <script type="text/javascript">
@@ -196,8 +193,7 @@
 			.config(function ($mdThemingProvider, $mdIconProvider) {
 
 //					https://www.google.com/design/icons/
-				$mdIconProvider
-						.defaultIconSet("./assets/svg//ic_help_48px.svg", 48)
+				$mdIconProvider.icon("help", "./assets/svg/ic_help_48px.svg", 48)
 					//						.icon("search", "./assets/svg/ic_search_white_48px.svg", 48)
 				;
 
