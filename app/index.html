@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Ethereum Mining Profitability Calculator</title>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+	<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+	<link rel="stylesheet" href="./bower_components/angular-material/angular-material.css"/>
+
+	<link rel="stylesheet" href="assets/app.css"/>
+</head>
+
+<body ng-app="calculatorApp" layout="column" ng-controller="HomeCtrl as home" data-ng-init="init()">
+
+<!--Header-->
+<md-toolbar layout="row" layout-sm="column" class="md-whiteframe-z1" layout-align="center center">
+	<div flex layout-fill>
+		<h1>Ethereum Mining Profitability Calculator</h1>
+	</div>
+	<!--<md-button href="/info" class="md-icon-button" aria-label="More info">-->
+	<!--<md-icon md-svg-icon="info"></md-icon>-->
+	<!--</md-button>-->
+	<div flex layout="row" layout-align="end center">
+		<!--<md-select placeholder="Country" ng-model="country">-->
+		<!--<md-select-label>{{country.name}}</md-select-label>-->
+		<!--<md-option ng-repeat="c in countries" value="{{c.iso}}">{{c.name}}</md-option>-->
+		<!--</md-select>-->
+		<!--<md-select placeholder="Year" ng-model="year">-->
+		<!--<md-option ng-repeat="y in years" value="{{y}}">{{y}}</md-option>-->
+		<!--</md-select>-->
+		<md-button href="https://github.com/anthonygraignic/ethereum-mining-calculator" class="md-icon-button"
+		           aria-label="About">
+			<md-icon md-svg-icon="help"></md-icon>
+		</md-button>
+	</div>
+</md-toolbar>
+
+<!--Main-->
+<div layout="column" tabIndex="-1" role="main" class="md-whiteframe-z2">
+	<form name="calculatorForm">
+		<md-content id="content">
+			<md-card>
+				<md-card-content>
+					<h1 class="md-title">Your Hashrate: </h1>
+
+					<div layout="row" layout-sm="column">
+						<!-- Hashrate-->
+						<md-input-container>
+							<label>Hashrate in MH/s</label>
+							<input type="number" min="0" max="9999999" name="hashrate" ng-model="user.gpu.hashrate"
+							       required ng-change="resetGPU(); computeProfits();">
+
+							<div ng-messages="calculatorForm.hashrate.$error"
+							     ng-show="calculatorForm.hashrate.$dirty && calculatorForm.hashrate.$invalid">
+								<!--<div ng-message="min">Come on, don't understimate yourself !</div>-->
+								<div ng-message="max">Impossibruuuuuuuuuuuu</div>
+							</div>
+						</md-input-container>
+
+						<!-- GPU choice-->
+						<md-input-container>
+							<md-select placeholder="Select your GPU" ng-model="user.gpu" md-on-open="loadGPUs()"
+							           ng-change="computeProfits()">
+								<md-optgroup label="AMD">
+									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'AMD' }">
+										{{gpu.name}} on {{gpu.os}}
+									</md-option>
+								</md-optgroup>
+								<md-optgroup label="Nvidia">
+									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Nvidia' }">
+										{{gpu.name}} on {{gpu.os}}
+									</md-option>
+								</md-optgroup>
+								<md-optgroup label="Cloud">
+									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Cloud' }">
+										{{gpu.name}} on {{gpu.os}}
+									</md-option>
+								</md-optgroup>
+							</md-select>
+						</md-input-container>
+
+						<!-- Cloud pricing-->
+						<md-input-container ng-show="user.gpu.price">
+							<label>Instance price in {{ userCurrency }}</label>
+							<input type="number" min="0" step="3" ng-model="user.gpu.price">
+						</md-input-container>
+					</div>
+
+					<div layout="row" layout-sm="column">
+						<md-input-container flex>
+							<label>Network Hashrate in GH/s</label>
+							<input type="number" min="0" ng-model="network.hashrate" ng-change="computeProfits()">
+						</md-input-container>
+						<md-input-container flex>
+							<label>Average Blocktime in seconds</label>
+							<input type="number" min="0" ng-model="network.blockTime" ng-change="computeProfits()">
+						</md-input-container>
+						<md-input-container>
+							<label>1 ETH Price {{network.market.price.usd | currency:undefined:3}} <b>({{network.market.change}}
+								%)</b></label>
+							<input type="number" step="any" ng-model="user.price.usd" ng-change="computeProfits()">
+							<!--<md-select ng-model="currency">-->
+							<!--</md-select>-->
+						</md-input-container>
+					</div>
+					<div layout="row" layout-sm="column">
+						<md-checkbox ng-model="user.electricity" aria-label="Electricity costs">
+							Electricity costs
+						</md-checkbox>
+						<div ng-if="user.electricity">
+							<p>Hey</p>
+						</div>
+					</div>
+				</md-card-content>
+				<div class="md-actions" layout="row" layout-align="end center">
+					<md-button class="md-raised md-warn" ng-click="reset()">Reset</md-button>
+				</div>
+			</md-card>
+			<md-card>
+				<md-card-content>
+					<md-subheader class="md-no-sticky">Earnings</md-subheader>
+					<md-list ng-repeat="earning in earnings.tab">
+						<md-list-item>
+							<p>{{earning.label}}</p>
+
+							<p>{{earning.eth|number:6}} ETH</p>
+
+							<p>{{earning.eth * user.price.usd| currency:undefined:6}}</p>
+						</md-list-item>
+						<md-divider ng-hide="earning.last"></md-divider>
+						<!--<md-list-item>-->
+						<!--<p>Per hour:</p>-->
+						<!--<p>{{earnings.hour|number:6}} ETH</p>-->
+						<!--<p>{{earnings.hour * user.price.usd| currency:undefined:6}}</p>-->
+						<!--</md-list-item>-->
+						<!--<md-divider></md-divider>-->
+						<!--<md-list-item>-->
+						<!--<p>Per day:</p>-->
+						<!--<p>{{earnings.day|number:6}}  ETH</p>-->
+
+						<!--</md-list-item>-->
+						<!--<md-divider></md-divider>-->
+						<!--<md-list-item>-->
+						<!--<p>Per week:</p>-->
+						<!--<p>{{earnings.week|number:6}}  ETH</p>-->
+						<!--</md-list-item>-->
+						<!--<md-divider></md-divider>-->
+						<!--<md-list-item>-->
+						<!--<p>Per month:</p>-->
+						<!--<p>{{earnings.month|number:6}}  ETH</p>-->
+						<!--</md-list-item>-->
+					</md-list>
+				</md-card-content>
+
+			</md-card>
+			<md-card>
+				<md-card-content>
+					<h1 class="md-title">Notes</h1>
+
+					<p>Credits to ?<br></p>
+
+					<p>References :
+					<ul>
+						<li>
+							<a href="https://forum.ethereum.org/discussion/2134/gpu-mining-is-out-come-and-let-us-know-of-your-bench-scores">GPU
+								Mining score</a></li>
+					</ul>
+					</p>
+				</md-card-content>
+			</md-card>
+		</md-content>
+	</form>
+</div>
+
+<script src="./bower_components/angular/angular.js"></script>
+<script src="./bower_components/angular-animate/angular-animate.js"></script>
+<script src="./bower_components/angular-aria/angular-aria.js"></script>
+<script type="text/javascript" src="./bower_components/angular-material/angular-material.js"></script>
+
+<script src="./src/calculator/Calculator.js"></script>
+<script src="./src/calculator/HomeCtrl.js"></script>
+
+<!-- TODO http.get call -->
+<script src="./assets/json/gpus.json"></script>
+
+<!--<script src="./bower_components/material-design-icons/action/svg/production/ic_help_48px.svg"></script>-->
+
+<script type="text/javascript">
+
+	angular
+			.module('calculatorApp', ['ngMaterial', 'calculator'])
+			.config(function ($mdThemingProvider, $mdIconProvider) {
+
+//					https://www.google.com/design/icons/
+				$mdIconProvider
+						.defaultIconSet("./assets/svg//ic_help_48px.svg", 48)
+					//						.icon("search", "./assets/svg/ic_search_white_48px.svg", 48)
+				;
+
+				$mdThemingProvider.theme('default');
+
+			});
+
+</script>
+
+</body>
+</html>
