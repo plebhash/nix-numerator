@@ -92,14 +92,14 @@
 				.success(function (resp) {
 					var sumBlocktime = 0;
 					var sumDifficulty = 0;
-					var arrayLength= resp.data.blocks.length;
+					var arrayLength = resp.data.blocks.length;
 					for (var i = 0; i < arrayLength; i++) {
 						sumBlocktime += resp.data.blocks[i].blockTime;
 						sumDifficulty += resp.data.blocks[i].difficulty;
 					}
 					// Calculate average
 					$scope.network.blockTime = sumBlocktime / arrayLength;
-					$scope.network.hashrate = 1e-9 * sumDifficulty / arrayLength;
+					$scope.network.hashrate = (sumDifficulty / sumBlocktime) * 1e-9;
 				}).error(function (data, status) {
 					console.log("And we just got hit by a " + status + " HTTP status !!!");
 					//DEV
