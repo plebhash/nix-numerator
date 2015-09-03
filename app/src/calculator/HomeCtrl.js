@@ -31,38 +31,59 @@
 			);
 		};
 
+		/**
+		 * Compute profits
+		 */
 		$scope.computeProfits = function () {
 			var userRatio = $scope.user.gpu.hashrate * 1e6 / ($scope.network.hashrate * 1e9);
 			var blocksPerMin = 60.0 / $scope.network.blockTime;
 			var ethPerMin = blocksPerMin * 5.0;
 			// Calculate all earnings
-			var minute = userRatio * ethPerMin;
-			var hour = minute * 60;
-			var day = hour * 24;
-			var week = day * 7;
-			var month = day * 30;
+			var minuteEth = userRatio * ethPerMin;
+			var hourEth = minuteEth * 60;
+			var dayEth = hourEth * 24;
+			var weekEth = dayEth * 7;
+			var monthEth = dayEth * 30;
+
+			// Convert ETH to USD
+			var hourPrice = hourEth * $scope.user.price.usd;
+			// If cloud, subtract instance hourly price
+			if ($scope.user.gpu.price) {
+				hourPrice = hourPrice - $scope.user.gpu.price;
+			}
+			var dayPrice = hourPrice * 24;
+			var weekPrice = dayPrice * 7;
+			var monthPrice = dayPrice * 30;
+
 			// Put them in an array to ng-repeat
 			$scope.earnings.tab = [];
 			$scope.earnings.tab.push({
 				label: 'Per hour',
-				eth: hour
+				eth: hourEth,
+				price: hourPrice
 			});
 			$scope.earnings.tab.push({
 				label: 'Per day',
-				eth: day
+				eth: dayEth,
+				price: dayPrice
 			});
 			$scope.earnings.tab.push({
 				label: 'Per week',
-				eth: week
+				eth: weekEth,
+				price: weekPrice
 			});
 			$scope.earnings.tab.push({
 				label: 'Per month',
-				eth: month,
+				eth: monthEth,
+				price: monthPrice,
 				// Avoid looking for last element and slow page
 				last: true
 			});
 		};
 
+		/**
+		 * Async load of GPU list
+		 */
 		$scope.loadGPUs = function () {
 			// Fill list of GPUs
 			$http.get("./assets/json/gpus.json")
@@ -72,7 +93,20 @@
 					console.log("And we just got hit by a " + status + " !!!");
 				});
 		};
+		/**
+		 * Reset GPU price (electricity or cloud instance cost)
+		 */
+		$scope.resetGpuPrice= function () {
+			if(!$scope.user.electricity){
+				$scope.user.gpu.price = undefined;
+				// Compute profits without price
+				$scope.computeProfits();
+			}
+		};
 
+		/**
+		 * Reset GPU selection
+		 */
 		$scope.resetGPU = function () {
 			var tmp = $scope.user.gpu.hashrate;
 			$scope.user.gpu = {
@@ -80,6 +114,9 @@
 			};
 		};
 
+		/**
+		 * Get all useful data
+		 */
 		$scope.init = function () {
 			$http.get("http://coinmarketcap-nexuist.rhcloud.com/api/eth")
 				.success(function (data) {
@@ -108,6 +145,10 @@
 				});
 		};
 
+		/**
+		 * Fill prices (str -> float)
+		 * @param price
+		 */
 		var fillPrices = function (price) {
 			$scope.user.price = {};
 			$scope.user.price.usd = parseFloat(price.usd, 10);
