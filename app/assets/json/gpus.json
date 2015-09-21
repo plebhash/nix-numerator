@@ -17,7 +17,8 @@
 	  "minHashrate": 22.3,
 	  "avgHashrate": 22.4,
 	  "maxHashrate": 22.4,
-	  "hashrate": 22.4570
+	  "hashrate": 22.4570,
+	  "power" : 257
 	},
 	{
 	  "vendor": "AMD",
@@ -84,10 +85,10 @@
 	  "name": "GeForce GT 750M 2048 MB",
 	  "os": "OSX 10.10.2",
 	  "cpp-ethereum": "0.9.21",
-	  "minHashrate": .408788,
-	  "avgHashrate": .460363,
-	  "maxHashrate": .520639,
-	  "hashrate": .457463
+	  "minHashrate": 0.408788,
+	  "avgHashrate": 0.460363,
+	  "maxHashrate": 0.520639,
+	  "hashrate": 0.457463
 	},
 	{
 	  "vendor": "Nvidia",
@@ -137,7 +138,7 @@
 	  "minHashrate": 24,
 	  "avgHashrate": 24,
 	  "maxHashrate": 24,
-	  "hashrate": 24
+	  "hashrate": 24,
 	  "price": 0.59
 	}
 ]

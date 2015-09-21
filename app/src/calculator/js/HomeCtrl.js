@@ -6,17 +6,24 @@
 	angular
 		.module('calculator', [])
 		.controller('HomeCtrl', HomeCtrl);
-	function HomeCtrl($scope, $log, $mdToast, $animate, $http, $locale) {
+	function HomeCtrl($scope, $mdToast, $mdDialog, $http, $locale) {
 		// Init object with default value
 		$scope.user = {};
 		$scope.earnings = {};
+		$scope.electricity = {price: 0.1293};
 		$scope.network = {
 			hashrate: 0,
 			blockTime: 0,
 			ethPrice: 1.0
 		};
 		$scope.gpus = [];
-		$scope.userCurrency = $locale.NUMBER_FORMATS.CURRENCY_SYM;
+		$scope.currency = $locale.NUMBER_FORMATS.CURRENCY_SYM;
+		$scope.currencies = [
+			{
+				name: 'USD',
+				sym: $locale.NUMBER_FORMATS.CURRENCY_SYM
+			}
+		];
 
 		$scope.onClick = function (points, evt) {
 			console.log(points, evt);
@@ -93,13 +100,29 @@
 					console.log("And we just got hit by a " + status + " !!!");
 				});
 		};
+
 		/**
-		 * Reset GPU price (electricity or cloud instance cost)
+		 * Convert Watts to KWh for a given time (in hours)
+		 * @param watts
+		 * @param hours
+		 * @returns {number}
 		 */
-		$scope.resetGpuPrice= function () {
-			if(!$scope.user.electricity){
-				$scope.user.gpu.price = undefined;
-				// Compute profits without price
+		var convertWtoKWh = function (watts, hours) {
+			return hours * watts / 1000;
+		};
+
+		/**
+		 * Compute energy costs
+		 */
+		$scope.computeEnergyCosts = function () {
+			// Avoid unnecessary calculation if no GPU selected
+			if ($scope.user.gpu) {
+				if ($scope.user.electricity && $scope.user.gpu.power) {
+					$scope.user.gpu.price = convertWtoKWh($scope.electricity.price, 1) * $scope.user.gpu.power;
+				} else {
+					$scope.user.gpu.price = undefined;
+				}
+				// Compute profits again
 				$scope.computeProfits();
 			}
 		};
@@ -162,5 +185,35 @@
 			fillPrices($scope.network.market.price);
 			$scope.showSimpleToast('Hashrate reset');
 		};
+
+		$scope.showAdvanced = function (ev) {
+			$mdDialog.show({
+				controller: DialogController,
+				templateUrl: 'src/calculator/html/powersupply.tmpl.html',
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				clickOutsideToClose: true,
+				locals: {
+					gpu: $scope.user.gpu
+				}
+			})
+				.then(function (power) {
+					$scope.user.gpu.power = power;
+					$scope.computeEnergyCosts();
+					$scope.status = 'You said the information was "' + power + '".';
+				}, function () {
+					$scope.status = 'You cancelled the dialog.';
+				});
+		};
+		function DialogController($scope, $mdDialog, gpu) {
+			$scope.gpu = gpu;
+
+			$scope.hide = function () {
+				$mdDialog.hide($scope.gpu.power);
+			};
+			$scope.cancel = function () {
+				$mdDialog.cancel();
+			};
+		}
 	}
 })();

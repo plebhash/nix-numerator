@@ -22,6 +22,9 @@
 		<h1>Ethereum Mining Profitability Calculator</h1>
 	</div>
 	<div flex layout="row" layout-align="end center">
+		<md-select ng-model="currency">
+			<md-option ng-repeat="cur in currencies" value="{{cur.sym}}">{{cur.name}} ({{cur.sym}})</md-option>
+		</md-select>
 		<md-button href="https://github.com/anthonygraignic/ethereum-mining-calculator" class="md-icon-button"
 		           aria-label="About">
 			<md-icon md-svg-icon="help"></md-icon>
@@ -37,11 +40,12 @@
 				<md-card-content>
 					<h1 class="md-title">Your Hashrate: </h1>
 
-					<div layout="row" layout-sm="column">
+					<div layout="row" layout-sm="column" layout-align="start center">
 						<!-- Hashrate-->
 						<md-input-container>
 							<label>Hashrate in MH/s</label>
-							<input type="number" min="0" max="9999999" name="hashrate" ng-model="user.gpu.hashrate"
+							<input type="number" min="0" max="9999999" step="any" name="hashrate"
+							       ng-model="user.gpu.hashrate"
 							       required ng-change="resetGPU(); computeProfits();">
 
 							<div ng-messages="calculatorForm.hashrate.$error"
@@ -75,20 +79,21 @@
 
 						<!-- Cloud pricing-->
 						<md-input-container ng-show="user.gpu.vendor ==='Cloud'">
-							<label>Instance hourly price in {{ userCurrency }}</label>
-							<input type="number" step="3" ng-model="user.gpu.price" ng-change="computeProfits()">
+							<label>Instance hourly price in {{ currency }}</label>
+							<input type="number" step="0.01" ng-model="user.gpu.price" ng-change="computeProfits()">
 						</md-input-container>
 					</div>
 
 					<div layout="row" layout-sm="column">
 						<md-input-container flex>
 							<label>Network Hashrate in GH/s</label>
-							<input type="number" min="0" step="3" ng-model="network.hashrate"
+							<input type="number" min="0" step="any" ng-model="network.hashrate"
 							       ng-change="computeProfits()">
 						</md-input-container>
 						<md-input-container flex>
 							<label>Average Blocktime in seconds</label>
-							<input type="number" min="0" ng-model="network.blockTime" ng-change="computeProfits()">
+							<input type="number" min="0" step="any" ng-model="network.blockTime"
+							       ng-change="computeProfits()">
 						</md-input-container>
 						<md-input-container>
 							<label>1 ETH Price {{network.market.price.usd | currency:undefined:3}} <b>({{network.market.change}}
@@ -99,13 +104,24 @@
 						</md-input-container>
 					</div>
 					<md-checkbox ng-model="user.electricity" aria-label="Electricity costs"
-					             ng-disabled="user.gpu.vendor ==='Cloud'" ng-change="resetGpuPrice()">
+					             ng-disabled="!user.gpu || user.gpu.vendor ==='Cloud'" ng-change="computeEnergyCosts()">
 						Electricity costs
 					</md-checkbox>
-					<div layout="row" layout-sm="column">
-						<md-input-container ng-if="user.electricity && user.gpu">
-							<label>Electricity hourly costs in {{ userCurrency }}</label>
-							<input type="number" step="3" ng-model="user.gpu.price" ng-change="computeProfits()">
+					<div layout="row" layout-sm="column" ng-if="user.electricity && user.gpu"
+					     layout-align="center center">
+						<md-input-container flex="20">
+							<label>{{ currency }} per KWh</label>
+							<input type="number" step="0.0001" ng-model="electricity.price" ng-change="computeEnergyCosts()">
+						</md-input-container>
+						<md-button class="md-icon-button" ng-click="showAdvanced($event)" aria-label="Power supply">
+							<md-icon md-svg-icon="power"></md-icon>
+						</md-button>
+						<md-slider flex="30" min="0" step="1" max="500" ng-model="user.gpu.power" aria-label="Power supply"
+						           id="power-supply" class="md-primary" ng-change="computeEnergyCosts()">
+						</md-slider>
+						<md-input-container>
+							<label>Max power in Watts</label>
+							<input type="number" ng-model="user.gpu.power" aria-controls="power-supply" ng-change="computeEnergyCosts()">
 						</md-input-container>
 					</div>
 				</md-card-content>
@@ -147,14 +163,17 @@
 						<li>
 							Ethereum Charts & data on <a href="http://coinmarketcap.com/currencies/ethereum/">CoinMarketCap</a>
 						</li>
+						<li>
+							KWh price (Residential June 2015) from <a href="http://www.eia.gov/electricity/monthly/epm_table_grapher.cfm?t=epmt_5_6_a">eia.gov</a>
+						</li>
 					</ul>
 					</p>
 
 				</md-card-content>
 				<md-card-footer>
-					Donate to a newbie <a
+					Donate to the creator: <a
 						href="https://etherchain.org/account/0x1d4f6afc0e305048ae0a9be9f76b4b89d4a360a5">
-					1d4f6afc0e305048ae0a9be9f76b4b89d4a360a5</a>
+					0x1d4f6afc0e305048ae0a9be9f76b4b89d4a360a5</a>
 				</md-card-footer>
 			</md-card>
 		</md-content>
@@ -166,8 +185,8 @@
 <script src="./bower_components/angular-aria/angular-aria.js"></script>
 <script type="text/javascript" src="./bower_components/angular-material/angular-material.js"></script>
 
-<script src="./src/calculator/Calculator.js"></script>
-<script src="./src/calculator/HomeCtrl.js"></script>
+<script src="./src/calculator/js/Calculator.js"></script>
+<script src="./src/calculator/js/HomeCtrl.js"></script>
 
 <!--<script src="./bower_components/material-design-icons/action/svg/production/ic_help_48px.svg"></script>-->
 
@@ -179,7 +198,7 @@
 
 //					https://www.google.com/design/icons/
 				$mdIconProvider.icon("help", "./assets/svg/ic_help_48px.svg", 48)
-					//						.icon("search", "./assets/svg/ic_search_white_48px.svg", 48)
+											.icon("power", "./assets/svg/ic_power_48px.svg", 48)
 				;
 
 				$mdThemingProvider.theme('default');
