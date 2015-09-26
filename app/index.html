@@ -58,7 +58,7 @@
 						<!-- GPU choice-->
 						<md-input-container>
 							<md-select placeholder="Select your GPU" ng-model="user.gpu" md-on-open="loadGPUs()"
-							           ng-change="computeProfits()">
+							           ng-change="selectGPU()">
 								<md-optgroup label="AMD">
 									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'AMD' }">
 										{{gpu.name}} on {{gpu.os}}
@@ -80,7 +80,7 @@
 						<!-- Cloud pricing-->
 						<md-input-container ng-show="user.gpu.vendor ==='Cloud'">
 							<label>Instance hourly price in {{ currency }}</label>
-							<input type="number" step="0.01" ng-model="user.gpu.price" ng-change="computeProfits()">
+							<input type="number" step="0.01" ng-model="user.gpu.costs" ng-change="computeProfits()">
 						</md-input-container>
 					</div>
 
@@ -111,17 +111,20 @@
 					     layout-align="center center">
 						<md-input-container flex="20">
 							<label>{{ currency }} per KWh</label>
-							<input type="number" step="0.0001" ng-model="electricity.price" ng-change="computeEnergyCosts()">
+							<input type="number" step="0.0001" ng-model="electricity.price"
+							       ng-change="computeEnergyCosts()">
 						</md-input-container>
 						<md-button class="md-icon-button" ng-click="showAdvanced($event)" aria-label="Power supply">
 							<md-icon md-svg-icon="power"></md-icon>
 						</md-button>
-						<md-slider flex="30" min="0" step="1" max="500" ng-model="user.gpu.power" aria-label="Power supply"
+						<md-slider flex="30" min="0" step="1" max="500" ng-model="user.gpu.power"
+						           aria-label="Power supply"
 						           id="power-supply" class="md-primary" ng-change="computeEnergyCosts()">
 						</md-slider>
 						<md-input-container>
 							<label>Max power in Watts</label>
-							<input type="number" ng-model="user.gpu.power" aria-controls="power-supply" ng-change="computeEnergyCosts()">
+							<input type="number" ng-model="user.gpu.power" aria-controls="power-supply"
+							       ng-change="computeEnergyCosts()">
 						</md-input-container>
 					</div>
 				</md-card-content>
@@ -131,7 +134,7 @@
 			</md-card>
 			<md-card>
 				<md-card-content>
-					<md-subheader class="md-no-sticky">Earnings</md-subheader>
+					<md-subheader>Earnings</md-subheader>
 					<md-list ng-repeat="earning in earnings.tab">
 						<md-list-item>
 							<p>{{earning.label}}</p>
@@ -145,7 +148,28 @@
 						<md-divider ng-hide="earning.last"></md-divider>
 					</md-list>
 				</md-card-content>
+			</md-card>
+			<md-card>
+				<md-card-content>
+					<md-subheader>ROI</md-subheader>
+					<p ng-show="user.gpu && user.gpu.vendor ==='Cloud'">Nothing to calculate !</p>
 
+					<div layout="row" layout-sm="column" ng-hide="!user.gpu || user.gpu.vendor ==='Cloud'">
+						<!--<div layout="column">-->
+						<md-input-container>
+							<label>Capital in {{ currency }}</label>
+							<input type="number" step="1" ng-model="roi.capital" aria-controls="capital"
+							       ng-change="computeRoi()">
+						</md-input-container>
+						<md-datepicker ng-model="roi.startDate" md-placeholder="Enter mining date"
+						               ng-change="computeRoi()"></md-datepicker>
+						<!--</div>-->
+						<p flex="10"></p>
+
+						<p ng-show="roi.capital">$$$ after <b>{{ roi.date | date:'mediumDate'}}</b>
+						</p>
+					</div>
+				</md-card-content>
 			</md-card>
 			<md-card>
 				<md-card-content>
@@ -164,11 +188,12 @@
 							Ethereum Charts & data on <a href="http://coinmarketcap.com/currencies/ethereum/">CoinMarketCap</a>
 						</li>
 						<li>
-							KWh price (Residential June 2015) from <a href="http://www.eia.gov/electricity/monthly/epm_table_grapher.cfm?t=epmt_5_6_a">eia.gov</a>
+							KWh price (Residential June 2015) from <a
+								href="http://www.eia.gov/electricity/monthly/epm_table_grapher.cfm?t=epmt_5_6_a">eia.gov</a>
 						</li>
 					</ul>
+					Source code can be found <a href="https://github.com/anthonygraignic/ethereum-mining-calculator">here</a>.
 					</p>
-
 				</md-card-content>
 				<md-card-footer>
 					Donate to the creator: <a
@@ -188,6 +213,8 @@
 <script src="./src/calculator/js/Calculator.js"></script>
 <script src="./src/calculator/js/HomeCtrl.js"></script>
 
+<script src="./bower_components/moment/min/moment.min.js"></script>
+
 <!--<script src="./bower_components/material-design-icons/action/svg/production/ic_help_48px.svg"></script>-->
 
 <script type="text/javascript">
@@ -198,7 +225,7 @@
 
 //					https://www.google.com/design/icons/
 				$mdIconProvider.icon("help", "./assets/svg/ic_help_48px.svg", 48)
-											.icon("power", "./assets/svg/ic_power_48px.svg", 48)
+						.icon("power", "./assets/svg/ic_power_48px.svg", 48)
 				;
 
 				$mdThemingProvider.theme('default');

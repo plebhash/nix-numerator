@@ -2,8 +2,7 @@
 Ethereum Mining Profitability Calculator
 
 ## Features
-### Basic
-#### Network stats
+### Network stats
 Network hashrate & blocktime are calculated over the last 64 blocks from [Etherchain.org](https://etherchain.org/api/basic_stats)
 
 ### Price calculation
@@ -20,9 +19,19 @@ Electricity price:
 * In Europe [eurostat](http://ec.europa.eu/eurostat/statistics-explained/index.php/Energy_price_statistics)
 * In America [eia.gov]( http://www.eia.gov/electricity/monthly/epm_table_grapher.cfm?t=epmt_5_6_a)
 
-### Todo
+### ROI
+The card "ROI" doesn't display the rate in percentage but rather the exact date when ROI=0.
+Corresponding to the moment you will start making benefits.
+
+In fact, it's too early to predict how ETH will evolve.
+As soon as trends are well establish, more rates and other stuff will be added.
+
+You can change the starting date in case you didn't wait for this calculator to mine.
+
+## Todo
 * Average network stats on more blocks (>64) to get stable value
 * Possibility to choose several GPU for designing a mining rig ([Chips?](https://material.angularjs.org/latest/#/demo/material.components.chips))
+* Charts
 * Use $watch (problems with undefined values :-/)
 
 

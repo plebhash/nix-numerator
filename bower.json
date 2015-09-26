@@ -1,18 +1,19 @@
 {
-  "name": "angular-material-starter",
-  "description": "A starter project for AngularJS Material",
-  "version": "0.0.2",
-  "homepage": "https://github.com/angular/material-start",
+  "name": "ethereum-mining-calculator",
+  "description": "Ethereum Mining Profitability Calculator",
+  "version": "1.0.0",
+  "homepage": "https://github.com/anthonygraignic/ethereum-mining-calculator",
   "license": "MIT",
   "private": true,
   "dependencies": {
     "angular": "^1.4.x",
     "angular-animate": "^1.4.x",
     "angular-aria": "^1.4.x",
-    "angular-material": "^0.9.0"
+    "angular-material": "^0.9.0",
+    "moment": "~2.10.6"
   },
   "devDependencies": {
-    "angular-material": "~0.9.4",
+    "angular-material": "https://github.com/angular/bower-material.git#master",
     "material-design-icons": "~2.0.0"
   }
 }

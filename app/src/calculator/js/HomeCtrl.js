@@ -9,6 +9,9 @@
 	function HomeCtrl($scope, $mdToast, $mdDialog, $http, $locale) {
 		// Init object with default value
 		$scope.user = {};
+		$scope.roi = {
+			startDate : new Date()
+		};
 		$scope.earnings = {};
 		$scope.electricity = {price: 0.1293};
 		$scope.network = {
@@ -38,6 +41,20 @@
 			);
 		};
 
+		$scope.selectGPU = function () {
+			// Update init capital
+			if ($scope.user.gpu.price) {
+				//Get GPU price
+				$scope.roi.capital = getGpuPriceFromEbay($scope.user.gpu.name);
+				// Failed to get price from ebay
+				if ($scope.roi.capital == 0) {
+					$scope.roi.capital = $scope.user.gpu.price;
+				}
+			}
+			// Compute profits
+			$scope.computeProfits();
+		};
+
 		/**
 		 * Compute profits
 		 */
@@ -55,8 +72,8 @@
 			// Convert ETH to USD
 			var hourPrice = hourEth * $scope.user.price.usd;
 			// If cloud, subtract instance hourly price
-			if ($scope.user.gpu.price) {
-				hourPrice = hourPrice - $scope.user.gpu.price;
+			if ($scope.user.gpu.costs) {
+				hourPrice = hourPrice - $scope.user.gpu.costs;
 			}
 			var dayPrice = hourPrice * 24;
 			var weekPrice = dayPrice * 7;
@@ -86,6 +103,9 @@
 				// Avoid looking for last element and slow page
 				last: true
 			});
+
+			// Compute ROI if needed
+			$scope.computeRoi();
 		};
 
 		/**
@@ -118,13 +138,39 @@
 			// Avoid unnecessary calculation if no GPU selected
 			if ($scope.user.gpu) {
 				if ($scope.user.electricity && $scope.user.gpu.power) {
-					$scope.user.gpu.price = convertWtoKWh($scope.electricity.price, 1) * $scope.user.gpu.power;
+					$scope.user.gpu.costs = convertWtoKWh($scope.electricity.price, 1) * $scope.user.gpu.power;
 				} else {
-					$scope.user.gpu.price = undefined;
+					$scope.user.gpu.costs = undefined;
 				}
 				// Compute profits again
 				$scope.computeProfits();
 			}
+		};
+		/**
+		 * Compute ROI
+		 */
+		$scope.computeRoi = function () {
+			if ($scope.roi.capital) {
+				$scope.roi.date = new Date(moment($scope.roi.startDate).add($scope.roi.capital / $scope.earnings.tab[1].price, 'days').calendar());
+			}
+		};
+
+		/**
+		 * Get best price from Ebay
+		 * @param name
+		 * @returns {number}
+		 */
+		var getGpuPriceFromEbay = function (name) {
+			return 0;
+			// TODO http://developer.ebay.com/Devzone/finding/Concepts/MakingACall.html
+			//$http.post("http://coinmarketcap-nexuist.rhcloud.com/api/eth", {
+			//	"tns.findItemsByKeywordsRequest": {"keywords": name}
+			//}).success(function (data) {
+			//	return 0;
+			//}).error(function (data, status) {
+			//	console.log("And we just got hit by a " + status + " !!!");
+			//	return 0;
+			//});
 		};
 
 		/**
