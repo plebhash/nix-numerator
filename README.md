@@ -1,5 +1,11 @@
-# ethereum-mining-calculator
-Ethereum Mining Profitability Calculator
+# Ethereum Mining Profitability Calculator
+Calculate your mining profitability from last network & currencies info.
+
+Simple choose a GPU from the [list](app/assets/json/gpus.json) or set your hashrate and let the magic happen !
+
+To enjoy all the features, we recommend that you select your GPU.
+If your GPU is not in the list, open an issue or post it on [GPU Mining bench scores](http://forum.ethereum.org/discussion/2134/gpu-mining-is-out-come-and-let-us-know-of-your-bench-scores).
+
 
 ## Features
 ### Network stats
@@ -9,22 +15,25 @@ Network hashrate & blocktime are calculated over the last 64 blocks from [Etherc
 ETH/USD from [CoinMarketCap](http://coinmarketcap.com/currencies/ethereum/)
 
 ### GPU Power consumption
+Data are from specs or [eXtreme Power Supply Calculator](http://outervision.com/power-supply-calculator).
+
 In our calculation we suppose that the GPU is at its max power consumption.
 Power is usually express in [Watt](https://en.wikipedia.org/wiki/Watt) unit. Voltage has nothing to do here as it's normalized at +12V.
 
-[eXtreme Power Supply Calculator](http://outervision.com/power-supply-calculator)
+Note: for cloud instances, power consumption is included in the instance price. This section is therefore disabled for cloud mining.
 
-Electricity price:
+#### Electricity price
 
 * In Europe [eurostat](http://ec.europa.eu/eurostat/statistics-explained/index.php/Energy_price_statistics)
 * In America [eia.gov]( http://www.eia.gov/electricity/monthly/epm_table_grapher.cfm?t=epmt_5_6_a)
 
 ### ROI
-The card "ROI" doesn't display the rate in percentage but rather the exact date when ROI=0.
-Corresponding to the moment you will start making benefits.
-
+The card "ROI" doesn't display the [rate](https://en.wikipedia.org/wiki/Return_on_investment) in percentage but rather the exact date when ROI=0.
+Corresponding to the moment you will start making benefits.s
 In fact, it's too early to predict how ETH will evolve.
 As soon as trends are well establish, more rates and other stuff will be added.
+
+If you chose a GPU, the capital will automatically be fulfilled with its price.
 
 You can change the starting date in case you didn't wait for this calculator to mine.
 
@@ -32,6 +41,7 @@ You can change the starting date in case you didn't wait for this calculator to 
 * Average network stats on more blocks (>64) to get stable value
 * Possibility to choose several GPU for designing a mining rig ([Chips?](https://material.angularjs.org/latest/#/demo/material.components.chips))
 * Charts
+* Get GPU card's price from Ebay
 * Use $watch (problems with undefined values :-/)
 
 
@@ -43,3 +53,4 @@ Others calculators:
 
 * [Badmofo's original calculator](http://badmofo.github.io/ethereum-mining-calculator/)
 * [Etherscan's one](http://etherscan.io/ether-mining-calculator)
+* [Ethereum GPU Efficiencies by o0ragman0o](https://docs.google.com/spreadsheets/d/1s5SaThZ5eOSAiVMpmuIjz-_YjIlcxttAzKuWKAbczds/edit#gid=0)

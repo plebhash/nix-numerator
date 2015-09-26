@@ -61,17 +61,17 @@
 							           ng-change="selectGPU()">
 								<md-optgroup label="AMD">
 									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'AMD' }">
-										{{gpu.name}} on {{gpu.os}}
+										{{gpu.name}}
 									</md-option>
 								</md-optgroup>
 								<md-optgroup label="Nvidia">
 									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Nvidia' }">
-										{{gpu.name}} on {{gpu.os}}
+										{{gpu.name}}
 									</md-option>
 								</md-optgroup>
 								<md-optgroup label="Cloud">
 									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Cloud' }">
-										{{gpu.name}} on {{gpu.os}}
+										{{gpu.name}}
 									</md-option>
 								</md-optgroup>
 							</md-select>
