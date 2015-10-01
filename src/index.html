@@ -9,12 +9,25 @@
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
 
 	<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
-	<link rel="stylesheet" href="./bower_components/angular-material/angular-material.css"/>
 
-	<link rel="stylesheet" href="assets/app.css"/>
+	<!-- build:css({.tmp/serve,src}) styles/vendor.css -->
+	<!-- bower:css -->
+	<!-- run `gulp inject` to automatically populate bower styles dependencies -->
+	<!-- endbower -->
+	<!-- endbuild -->
+
+	<!-- build:css({.tmp/serve,src}) styles/app.css -->
+	<!-- inject:css -->
+	<!-- css files will be automatically insert here -->
+	<!-- endinject -->
+	<!-- endbuild -->
 </head>
 
 <body ng-app="calculatorApp" layout="column" ng-controller="HomeCtrl as home" data-ng-init="init()">
+<!--[if lt IE 10]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+	your browser</a> to improve your experience.</p>
+<![endif]-->
 
 <!--Header-->
 <md-toolbar layout="row" layout-sm="column" class="md-whiteframe-z1" layout-align="center center">
@@ -74,6 +87,11 @@
 										{{gpu.name}}
 									</md-option>
 								</md-optgroup>
+								<md-optgroup label="Cpu">
+									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Cpu' }">
+										{{gpu.name}}
+									</md-option>
+								</md-optgroup>
 							</md-select>
 						</md-input-container>
 
@@ -108,6 +126,7 @@
 						Electricity costs
 					</md-checkbox>
 					<div layout="row" layout-sm="column" ng-if="user.electricity && user.gpu"
+					     ng-hide="!user.gpu || user.gpu.vendor ==='Cloud'"
 					     layout-align="center center">
 						<md-input-container flex="20">
 							<label>{{ currency }} per KWh</label>
@@ -205,15 +224,21 @@
 	</form>
 </div>
 
-<script src="./bower_components/angular/angular.js"></script>
-<script src="./bower_components/angular-animate/angular-animate.js"></script>
-<script src="./bower_components/angular-aria/angular-aria.js"></script>
-<script type="text/javascript" src="./bower_components/angular-material/angular-material.js"></script>
+<!-- build:js(src) scripts/vendor.js -->
+<!-- bower:js -->
+<!-- run `gulp inject` to automatically populate bower script dependencies -->
+<!-- endbower -->
+<!-- endbuild -->
 
-<script src="./src/calculator/js/Calculator.js"></script>
-<script src="./src/calculator/js/HomeCtrl.js"></script>
+<!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
+<!-- inject:js -->
+<!-- js files will be automatically insert here -->
+<!-- endinject -->
 
-<script src="./bower_components/moment/min/moment.min.js"></script>
+<!-- inject:partials -->
+<!-- angular templates will be automatically converted in js and inserted here -->
+<!-- endinject -->
+<!-- endbuild -->
 
 <!--<script src="./bower_components/material-design-icons/action/svg/production/ic_help_48px.svg"></script>-->
 

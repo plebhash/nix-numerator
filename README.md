@@ -40,10 +40,16 @@ You can change the starting date in case you didn't wait for this calculator to 
 ## Todo
 * Average network stats on more blocks (>64) to get stable value
 * Possibility to choose several GPU for designing a mining rig ([Chips?](https://material.angularjs.org/latest/#/demo/material.components.chips))
+* Import script from sheet
 * Charts
 * Get GPU card's price from Ebay
 * Use $watch (problems with undefined values :-/)
 
+## Build
+This project was built on the [starter Angular Material project](https://github.com/angular/material-start) and took some cool stuff from this [Yeoman Gulp generator](https://github.com/Swiip/generator-gulp-angular).
+Files present in the gh-pages branch are generated using gulp and the ``build`` task. Generated files can be found in dist folder.
+
+Just get dependencies with ``npm install && bower install``
 
 ## Credits
 * [Badmofo](https://github.com/badmofo/ethereum-mining-calculator) for starting this calculator.

@@ -9,11 +9,11 @@
     "angular": "^1.4.x",
     "angular-animate": "^1.4.x",
     "angular-aria": "^1.4.x",
-    "angular-material": "^0.9.0",
+    "angular-material": "^0.11.0",
     "moment": "~2.10.6"
   },
   "devDependencies": {
-    "angular-material": "https://github.com/angular/bower-material.git#master",
+    "angular-mocks": "^1.4.x",
     "material-design-icons": "~2.0.0"
   }
 }

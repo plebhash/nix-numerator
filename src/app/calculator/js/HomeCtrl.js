@@ -1,8 +1,11 @@
 /**
- * Created by Anthony on 02/06/2015.
+ * Created by Anthony on 31/08/2015.
  */
 (function () {
 	'use strict';
+	// Prepare the 'calculator' module for subsequent registration of controllers and delegates
+	angular.module('calculator', [ 'ngMaterial' ]);
+
 	angular
 		.module('calculator', [])
 		.controller('HomeCtrl', HomeCtrl);
@@ -28,10 +31,6 @@
 			}
 		];
 
-		$scope.onClick = function (points, evt) {
-			console.log(points, evt);
-		};
-
 		$scope.showSimpleToast = function (message) {
 			$mdToast.show(
 				$mdToast.simple()
@@ -47,7 +46,7 @@
 				//Get GPU price
 				$scope.roi.capital = getGpuPriceFromEbay($scope.user.gpu.name);
 				// Failed to get price from ebay
-				if ($scope.roi.capital == 0) {
+				if ($scope.roi.capital === 0) {
 					$scope.roi.capital = $scope.user.gpu.price;
 				}
 			}
@@ -192,7 +191,9 @@
 					$scope.network.market = data;
 					fillPrices(data.price);
 				}).error(function (data, status) {
+					$scope.showSimpleToast("Failed to load Network data from coinmarketcap-nexuist.rhcloud.com :-/");
 					console.log("And we just got hit by a " + status + " !!!");
+					$scope.user.price.usd = 0;
 				});
 			$http.get("https://etherchain.org/api/basic_stats")
 				.success(function (resp) {
@@ -207,6 +208,7 @@
 					$scope.network.blockTime = sumBlocktime / arrayLength;
 					$scope.network.hashrate = (sumDifficulty / sumBlocktime) * 1e-9;
 				}).error(function (data, status) {
+					$scope.showSimpleToast("Failed to load Network data from coinmarketcap-nexuist.rhcloud.com :-/");
 					console.log("And we just got hit by a " + status + " HTTP status !!!");
 					//DEV
 					$scope.network.blockTime = 1;
