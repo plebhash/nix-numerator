@@ -1,0 +1,18 @@
+[
+  {
+    "vendor": "BitMain",
+    "name": "S7",
+    "os": "",
+    "avgHashrate": 4000,
+    "power": 1200,
+    "price": 1600
+  },
+  {
+    "vendor": "BitMain",
+    "name": "S5",
+    "os": "",
+    "avgHashrate": 2000,
+    "power": 1200,
+    "price": 1000
+  }
+]
