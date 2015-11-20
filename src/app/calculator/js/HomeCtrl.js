@@ -150,7 +150,10 @@
 		 */
 		$scope.computeRoi = function () {
 			if ($scope.roi.capital) {
-				$scope.roi.date = new Date(moment($scope.roi.startDate).add($scope.roi.capital / $scope.earnings.tab[1].price, 'days').calendar());
+        if ($scope.earnings.tab[1].price > 0)
+          $scope.roi.date = new Date(moment($scope.roi.startDate).add($scope.roi.capital / $scope.earnings.tab[1].price, 'days').calendar());
+        else
+          $scope.roi.date = "No break-even date";
 			}
 		};
 
