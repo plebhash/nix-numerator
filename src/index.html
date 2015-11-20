@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Ethereum Mining Profitability Calculator</title>
+	<title>Bitcoin Mining Profitability Calculator</title>
 
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -32,13 +32,13 @@
 <!--Header-->
 <md-toolbar layout="row" layout-sm="column" class="md-whiteframe-z1" layout-align="center center">
 	<div flex layout-fill>
-		<h1>Ethereum Mining Profitability Calculator</h1>
+		<h1>Bitcoin Mining Profitability Calculator</h1>
 	</div>
 	<div flex layout="row" layout-align="end center">
 		<md-select ng-model="currency">
 			<md-option ng-repeat="cur in currencies" value="{{cur.sym}}">{{cur.name}} ({{cur.sym}})</md-option>
 		</md-select>
-		<md-button href="https://github.com/anthonygraignic/ethereum-mining-calculator" class="md-icon-button"
+		<md-button href="https://github.com/findkiko/ethereum-mining-calculator" class="md-icon-button"
 		           aria-label="About">
 			<md-icon md-svg-icon="help"></md-icon>
 		</md-button>
@@ -56,7 +56,7 @@
 					<div layout="row" layout-sm="column" layout-align="start center">
 						<!-- Hashrate-->
 						<md-input-container>
-							<label>Hashrate in MH/s</label>
+							<label>Hashrate in GH/s</label>
 							<input type="number" min="0" max="9999999" step="any" name="hashrate"
 							       ng-model="user.gpu.hashrate"
 							       required ng-change="resetGPU(); computeProfits();">
@@ -70,25 +70,25 @@
 
 						<!-- GPU choice-->
 						<md-input-container>
-							<md-select placeholder="Select your GPU" ng-model="user.gpu" md-on-open="loadGPUs()"
+							<md-select placeholder="Select your Miner" ng-model="user.gpu" md-on-open="loadGPUs()"
 							           ng-change="selectGPU()">
-								<md-optgroup label="AMD">
-									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'AMD' }">
+								<md-optgroup label="BitMain">
+									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'BitMain' }">
 										{{gpu.name}}
 									</md-option>
 								</md-optgroup>
-								<md-optgroup label="Nvidia">
-									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Nvidia' }">
+								<md-optgroup label="Spondoolies">
+									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Spondoolies' }">
+										{{gpu.name}}
+									</md-option>
+								</md-optgroup>
+								<md-optgroup label="Avalon">
+									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Avalon' }">
 										{{gpu.name}}
 									</md-option>
 								</md-optgroup>
 								<md-optgroup label="Cloud">
 									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Cloud' }">
-										{{gpu.name}}
-									</md-option>
-								</md-optgroup>
-								<md-optgroup label="Cpu">
-									<md-option ng-value="gpu" ng-repeat="gpu in gpus | filter: {vendor: 'Cpu' }">
 										{{gpu.name}}
 									</md-option>
 								</md-optgroup>
@@ -104,8 +104,8 @@
 
 					<div layout="row" layout-sm="column">
 						<md-input-container flex>
-							<label>Network Hashrate in GH/s</label>
-							<input type="number" min="0" step="any" ng-model="network.hashrate"
+							<label>Network Hashrate in H/s</label>
+							<input type="number" min="0" step="any" ng-model="network.difficulty"
 							       ng-change="computeProfits()">
 						</md-input-container>
 						<md-input-container flex>
@@ -114,7 +114,7 @@
 							       ng-change="computeProfits()">
 						</md-input-container>
 						<md-input-container>
-							<label>1 ETH Price {{network.market.price.usd | currency:undefined:3}} <b>({{network.market.change}}
+							<label>1 XBT Price {{network.market.price.usd | currency:undefined:3}} <b>({{network.market.change}}
 								%)</b></label>
 							<input type="number" step="any" ng-model="user.price.usd" ng-change="computeProfits()">
 							<!--<md-select ng-model="currency">-->
@@ -136,12 +136,12 @@
 						<md-button class="md-icon-button" ng-click="showAdvanced($event)" aria-label="Power supply">
 							<md-icon md-svg-icon="power"></md-icon>
 						</md-button>
-						<md-slider flex="30" min="0" step="1" max="500" ng-model="user.gpu.power"
+						<md-slider flex="30" min="0" step="1" max="5000" ng-model="user.gpu.power"
 						           aria-label="Power supply"
 						           id="power-supply" class="md-primary" ng-change="computeEnergyCosts()">
 						</md-slider>
 						<md-input-container>
-							<label>Max power in Watts</label>
+							<label>Max power in kW</label>
 							<input type="number" ng-model="user.gpu.power" aria-controls="power-supply"
 							       ng-change="computeEnergyCosts()">
 						</md-input-container>
@@ -158,7 +158,7 @@
 						<md-list-item>
 							<p>{{earning.label}}</p>
 
-							<p>{{earning.eth|number:6}} ETH</p>
+							<p>{{earning.eth|number:6}} XBT</p>
 
 							<p ng-style="earning.price < 0 && {'color': 'red'}">
 								{{earning.price | currency:undefined:6}}
@@ -180,7 +180,7 @@
 							<input type="number" step="1" ng-model="roi.capital" aria-controls="capital"
 							       ng-change="computeRoi()">
 						</md-input-container>
-						<md-datepicker ng-model="roi.startDate" md-placeholder="Enter mining date"
+						<md-datepicker ng-model="roi.startDate" md-placeholder="Enter mining start date"
 						               ng-change="computeRoi()"></md-datepicker>
 						<!--</div>-->
 						<p flex="10"></p>
@@ -204,7 +204,7 @@
 								Mining score</a>
 						</li>
 						<li>
-							Ethereum Charts & data on <a href="http://coinmarketcap.com/currencies/ethereum/">CoinMarketCap</a>
+							Bitcoin Charts & data on <a href="http://coinmarketcap.com/currencies/bitcoin/">CoinMarketCap</a>
 						</li>
 						<li>
 							KWh price (Residential June 2015) from <a

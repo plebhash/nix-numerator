@@ -16,11 +16,11 @@
 			startDate : new Date()
 		};
 		$scope.earnings = {};
-		$scope.electricity = {price: 0.1293};
+		$scope.electricity = {price: 0.09};
 		$scope.network = {
 			hashrate: 0,
-			blockTime: 0,
-			ethPrice: 1.0
+			blockTime: 600,
+			ethPrice: 300.0
 		};
 		$scope.gpus = [];
 		$scope.currency = $locale.NUMBER_FORMATS.CURRENCY_SYM;
@@ -58,11 +58,11 @@
 		 * Compute profits
 		 */
 		$scope.computeProfits = function () {
-			var userRatio = $scope.user.gpu.hashrate * 1e6 / ($scope.network.hashrate * 1e9);
-			var blocksPerMin = 60.0 / $scope.network.blockTime;
-			var ethPerMin = blocksPerMin * 5.0;
+      var reward = 50 * Math.pow(0.5, Math.floor($scope.network.nowBlock/210000));
+      var winWait = $scope.network.difficulty * Math.pow(2,32) / ($scope.user.gpu.hashrate * 1e9);
+      var blocksPerMin = 60 / winWait;
 			// Calculate all earnings
-			var minuteEth = userRatio * ethPerMin;
+			var minuteEth = blocksPerMin * reward;
 			var hourEth = minuteEth * 60;
 			var dayEth = hourEth * 24;
 			var weekEth = dayEth * 7;
@@ -112,7 +112,7 @@
 		 */
 		$scope.loadGPUs = function () {
 			// Fill list of GPUs
-			$http.get("./assets/json/gpus.json")
+			$http.get("./assets/json/asics.json")
 				.success(function (data) {
 					$scope.gpus = data;
 				}).error(function (data, status) {
@@ -185,8 +185,37 @@
 		/**
 		 * Get all useful data
 		 */
+      // TODO: refactor get requests into function call.
+      //
+      // function multiCall(requests) {
+      //   for (var i=0; i <requests.length; i++) {
+      //     var request = requests[i];
+      //     $http.get(request.url)
+      //       .success(function (data) {
+      //         $scope.network[request.field] = data;
+      //         fillPrices(data.price);
+      //
+      //       }).error(function (data, status) {
+      //         $scope.showSimpleToast("Failed to load Network data from " + request.url);
+      //         console.log("And we just got hit by a " + status + " !!!");
+      //         $scope.network[request.field] = 0;
+      //       });
+      //    }
+      // }
+      // function clearUserField(name) {
+      //   $scope.user[name] = 0;
+      //   }
+      // 
+      // var requests = [ {url:"foo", field:"price"},
+      //                  {url:"bar", field:"difficulty"},
+      //                  {url:"baz", field:"blockcount"}
+      //                ]
+      //
+      // multiCall(requests);
+      //
+      //
 		$scope.init = function () {
-			$http.get("http://coinmarketcap-nexuist.rhcloud.com/api/eth")
+			$http.get("http://coinmarketcap-nexuist.rhcloud.com/api/btc")
 				.success(function (data) {
 					$scope.network.market = data;
 					fillPrices(data.price);
@@ -195,24 +224,23 @@
 					console.log("And we just got hit by a " + status + " !!!");
 					$scope.user.price.usd = 0;
 				});
-			$http.get("https://etherchain.org/api/basic_stats")
+			$http.get("https://blockexplorer.com/api/status?q=getDifficulty")
 				.success(function (resp) {
-					var sumBlocktime = 0;
-					var sumDifficulty = 0;
-					var arrayLength = resp.data.blocks.length;
-					for (var i = 0; i < arrayLength; i++) {
-						sumBlocktime += resp.data.blocks[i].blockTime;
-						sumDifficulty += resp.data.blocks[i].difficulty;
-					}
-					// Calculate average
-					$scope.network.blockTime = sumBlocktime / arrayLength;
-					$scope.network.hashrate = (sumDifficulty / sumBlocktime) * 1e-9;
+					$scope.network.difficulty = resp.difficulty;
 				}).error(function (data, status) {
-					$scope.showSimpleToast("Failed to load Network data from coinmarketcap-nexuist.rhcloud.com :-/");
+					$scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
 					console.log("And we just got hit by a " + status + " HTTP status !!!");
 					//DEV
 					$scope.network.blockTime = 1;
-					$scope.network.hashrate = 2;
+					$scope.network.difficulty = 2;
+				});
+			$http.get("https://blockexplorer.com/api/status?q=getBlockCount")
+				.success(function (resp) {
+					$scope.network.nowBlock = resp.blockcount;
+				}).error(function (data, status) {
+					$scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
+					console.log("And we just got hit by a " + status + " HTTP status !!!");
+          $scope.network.nowBlock = 1;
 				});
 		};
 
@@ -231,7 +259,7 @@
 		$scope.reset = function () {
 			$scope.user = {};
 			fillPrices($scope.network.market.price);
-			$scope.showSimpleToast('Hashrate reset');
+			$scope.showSimpleToast('Parameters reset');
 		};
 
 		$scope.showAdvanced = function (ev) {
