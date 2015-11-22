@@ -19,6 +19,8 @@
 		$scope.electricity = {price: 0.09};
 		$scope.network = {
 			hashrate: 0,
+      diffIncrease: 3,
+      linearDiff: true,
 			blockTime: 600,
 			ethPrice: 300.0
 		};
@@ -49,59 +51,71 @@
 				if ($scope.roi.capital === 0) {
 					$scope.roi.capital = $scope.user.gpu.price;
 				}
+        if ($scope.user.gpu.vendor != "Cloud") {
+          $scope.user.electricity = true;
+        }
 			}
 			// Compute profits
-			$scope.computeProfits();
+			$scope.computeEnergyCosts();
 		};
+
+    // Currently unused, planned for "period ending: 2016-10-25" style output.
+    $scope.relCycleToDate = function (relCycle) {
+      var dayOffset = relCycle * 14;
+      var cycleDate = new Date(moment($scope.roi.startDate).add(dayOffset, 'days').calendar());
+      return cycleDate;
+    };
+
+    $scope.cycleEarning = function (relCycle) {
+      var diffPower = (100 + $scope.network.diffIncrease)/100;
+      var now = moment();
+      var preDays = now.diff(moment($scope.roi.startDate), 'days');
+      // TODO: Handle non exact cycle starts (initial partial cycle).
+      var preCycles = Math.floor(preDays / 14);
+      var futureDiff;
+      if ($scope.network.linearDiff) {
+        diffPower -= 1;
+        futureDiff = $scope.network.difficulty + ($scope.network.difficulty * (preCycles + relCycle) * diffPower);
+      } else {
+        futureDiff = $scope.network.difficulty * Math.pow(diffPower, (preCycles + relCycle));
+      }
+       // TODO: fix logic for mid-cycle split block reward containing block 420000.
+      var cycleBlock = $scope.network.nowBlock + ((preCycles + relCycle) * 2016);
+      var reward = 50 * Math.pow(0.5, Math.floor(cycleBlock / 210000));
+      var winWait = futureDiff * Math.pow(2,32) / ($scope.user.gpu.hashrate * 1e9);
+      var blocksPerCycle = 1209600 / winWait; // (60*60*20*14) secs per cycle.
+      var coinsPerCycle = blocksPerCycle * reward;
+      return coinsPerCycle;
+    };
+
+    $scope.getCycleProfit = function (relCycle) {
+      var cycleElec = $scope.user.gpu.costs * 336; // 24*14 hours per cycle.
+      var cycleCoins = $scope.cycleEarning(relCycle); 
+      var cycleIncome = cycleCoins * $scope.user.price.usd;
+      var cycleResults = { coins: cycleCoins, costs: cycleElec, profit: cycleIncome - cycleElec};
+      //console.log(cycleResults);
+      return cycleResults;
+    };
 
 		/**
 		 * Compute profits
 		 */
 		$scope.computeProfits = function () {
-      var reward = 50 * Math.pow(0.5, Math.floor($scope.network.nowBlock/210000));
-      var winWait = $scope.network.difficulty * Math.pow(2,32) / ($scope.user.gpu.hashrate * 1e9);
-      var blocksPerMin = 60 / winWait;
-			// Calculate all earnings
-			var minuteEth = blocksPerMin * reward;
-			var hourEth = minuteEth * 60;
-			var dayEth = hourEth * 24;
-			var weekEth = dayEth * 7;
-			var monthEth = dayEth * 30;
 
-			// Convert ETH to USD
-			var hourPrice = hourEth * $scope.user.price.usd;
-			// If cloud, subtract instance hourly price
-			if ($scope.user.gpu.costs) {
-				hourPrice = hourPrice - $scope.user.gpu.costs;
-			}
-			var dayPrice = hourPrice * 24;
-			var weekPrice = dayPrice * 7;
-			var monthPrice = dayPrice * 30;
-
-			// Put them in an array to ng-repeat
 			$scope.earnings.tab = [];
-			$scope.earnings.tab.push({
-				label: 'Per hour',
-				eth: hourEth,
-				price: hourPrice
-			});
-			$scope.earnings.tab.push({
-				label: 'Per day',
-				eth: dayEth,
-				price: dayPrice
-			});
-			$scope.earnings.tab.push({
-				label: 'Per week',
-				eth: weekEth,
-				price: weekPrice
-			});
-			$scope.earnings.tab.push({
-				label: 'Per month',
-				eth: monthEth,
-				price: monthPrice,
-				// Avoid looking for last element and slow page
-				last: true
-			});
+      for (var ROI = $scope.roi.capital * -1, i = 0; i < 150; i++) { //If you can't do it in 6 years...
+        var cycleResults = $scope.getCycleProfit(i); 
+        ROI += cycleResults.profit;
+        //output profits.
+        $scope.earnings.tab.push({
+          label: 'Cycle ' + i,
+          eth: cycleResults.coins,
+          price: cycleResults.profit,
+          roi: ROI
+        });
+       if (cycleResults.profit < 0)
+         break;
+      }
 
 			// Compute ROI if needed
 			$scope.computeRoi();
@@ -229,7 +243,7 @@
 				});
 			$http.get("https://blockexplorer.com/api/status?q=getDifficulty")
 				.success(function (resp) {
-					$scope.network.difficulty = resp.difficulty;
+					$scope.network.difficulty = Math.floor(resp.difficulty);
 				}).error(function (data, status) {
 					$scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
 					console.log("And we just got hit by a " + status + " HTTP status !!!");

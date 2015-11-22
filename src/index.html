@@ -35,8 +35,8 @@
 		<h1>Bitcoin Mining Profitability Calculator</h1>
 	</div>
 	<div flex layout="row" layout-align="end center">
-		<md-select ng-model="currency">
-			<md-option ng-repeat="cur in currencies" value="{{cur.sym}}">{{cur.name}} ({{cur.sym}})</md-option>
+		<md-select ng-model="currency" aria-label="Local Currency">
+      <md-option  ng-repeat="cur in currencies" aria-label="{{cur.name}}" value="{{cur.sym}}">{{cur.name}} ({{cur.sym}})</md-option>
 		</md-select>
 		<md-button href="https://github.com/findkiko/ethereum-mining-calculator" class="md-icon-button"
 		           aria-label="About">
@@ -104,9 +104,20 @@
 
 					<div layout="row" layout-sm="column">
 						<md-input-container flex>
-							<label>Network Hashrate in H/s</label>
+							<label>Difficulty</label>
 							<input type="number" min="0" step="any" ng-model="network.difficulty"
 							       ng-change="computeProfits()">
+						</md-input-container>
+						<md-input-container flex>
+							<label>Difficulty Increase (% per cycle)</label>
+							<input type="number" min="0" max="10" step="0.1" ng-model="network.diffIncrease"
+							       ng-change="computeProfits()">
+						</md-input-container>
+						<md-input-container flex>
+              <md-checkbox ng-model="network.linearDiff" aria-label="Linear Diff Increase"
+                            ng-change="computeEnergyCosts()">
+                Linear Diff
+              </md-checkbox>
 						</md-input-container>
 						<md-input-container flex>
 							<label>Average Blocktime in seconds</label>
@@ -114,9 +125,9 @@
 							       ng-change="computeProfits()">
 						</md-input-container>
 						<md-input-container>
-							<label>1 XBT Price {{network.market.price.usd | currency:undefined:3}} <b>({{network.market.change}}
+							<label>1 XBT Price {{network.market.price.usd | currency:undefined:2}} <b>({{network.market.change}}
 								%)</b></label>
-							<input type="number" step="any" ng-model="user.price.usd" ng-change="computeProfits()">
+							<input type="number" step="20" ng-disabled="!user.gpu" ng-model="user.price.usd" ng-change="computeProfits()">
 							<!--<md-select ng-model="currency">-->
 							<!--</md-select>-->
 						</md-input-container>
@@ -130,7 +141,7 @@
 					     layout-align="center center">
 						<md-input-container flex="20">
 							<label>{{ currency }} per KWh</label>
-							<input type="number" step="0.0001" ng-model="electricity.price"
+							<input type="number" step="0.005" ng-model="electricity.price"
 							       ng-change="computeEnergyCosts()">
 						</md-input-container>
 						<md-button class="md-icon-button" ng-click="showAdvanced($event)" aria-label="Power supply">
@@ -161,7 +172,11 @@
 							<p>{{earning.eth|number:6}} XBT</p>
 
 							<p ng-style="earning.price < 0 && {'color': 'red'}">
-								{{earning.price | currency:undefined:6}}
+								{{earning.price | currency:undefined:2}}
+							</p>
+
+							<p ng-style="earning.roi < 0 && {'color': 'red'}">
+								{{earning.roi | currency:undefined:2}}
 							</p>
 						</md-list-item>
 						<md-divider ng-hide="earning.last"></md-divider>
