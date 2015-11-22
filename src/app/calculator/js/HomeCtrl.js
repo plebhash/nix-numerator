@@ -20,7 +20,7 @@
 		$scope.network = {
 			hashrate: 0,
       diffIncrease: 3,
-      linearDiff: true,
+      linearDiff: false,
 			blockTime: 600,
 			ethPrice: 300.0
 		};
