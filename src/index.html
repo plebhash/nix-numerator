@@ -164,6 +164,24 @@
 			</md-card>
 			<md-card>
 				<md-card-content>
+					<md-subheader>ROI</md-subheader>
+					<p ng-show="user.gpu && user.gpu.vendor ==='Cloud'">Nothing to calculate !</p>
+
+					<div layout="row" layout-sm="column" ng-hide="!user.gpu || user.gpu.vendor ==='Cloud'">
+						<!--<div layout="column">-->
+						<md-input-container>
+							<label>Capital in {{ currency }}</label>
+							<input type="number" step="1" ng-model="roi.capital" aria-controls="capital"
+							       ng-change="computeRoi()">
+						</md-input-container>
+						<md-datepicker ng-model="roi.startDate" md-placeholder="Enter mining start date"
+						               ng-change="computeRoi()"></md-datepicker>
+						<!--</div>-->
+					</div>
+				</md-card-content>
+			</md-card>
+			<md-card>
+				<md-card-content>
 					<md-subheader>Earnings</md-subheader>
 					<md-list ng-repeat="earning in earnings.tab">
 						<md-list-item>
@@ -181,28 +199,6 @@
 						</md-list-item>
 						<md-divider ng-hide="earning.last"></md-divider>
 					</md-list>
-				</md-card-content>
-			</md-card>
-			<md-card>
-				<md-card-content>
-					<md-subheader>ROI</md-subheader>
-					<p ng-show="user.gpu && user.gpu.vendor ==='Cloud'">Nothing to calculate !</p>
-
-					<div layout="row" layout-sm="column" ng-hide="!user.gpu || user.gpu.vendor ==='Cloud'">
-						<!--<div layout="column">-->
-						<md-input-container>
-							<label>Capital in {{ currency }}</label>
-							<input type="number" step="1" ng-model="roi.capital" aria-controls="capital"
-							       ng-change="computeRoi()">
-						</md-input-container>
-						<md-datepicker ng-model="roi.startDate" md-placeholder="Enter mining start date"
-						               ng-change="computeRoi()"></md-datepicker>
-						<!--</div>-->
-						<p flex="10"></p>
-
-						<p ng-show="roi.capital">$$$ after <b>{{ roi.date | date:'mediumDate'}}</b>
-						</p>
-					</div>
 				</md-card-content>
 			</md-card>
 			<md-card>
