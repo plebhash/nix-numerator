@@ -4,7 +4,7 @@
 (function () {
 	'use strict';
 	// Prepare the 'calculator' module for subsequent registration of controllers and delegates
-	angular.module('calculator', [ 'ngMaterial' ]);
+	angular.module('calculator', [ 'ngMaterial', 'angular-rickshaw' ]);
 
 	angular
 		.module('calculator', [])
@@ -16,7 +16,9 @@
 			startDate : new Date(),
       startupFixed : 400,
       startupPerUnit : 10,
-      quantity : 1
+      quantity : 1,
+      graphOptions : { renderer: 'line' },
+      graphData : []
 		};
 		$scope.earnings = {};
 		$scope.electricity = {price: 0.09};
@@ -106,6 +108,7 @@
 		$scope.computeProfits = function () {
 
 			$scope.earnings.tab = [];
+      $scope.roi.graphData = [];
       var TotalStartupCost = $scope.roi.startupFixed + ($scope.roi.startupPerUnit * $scope.roi.quantity);
       var ROI = (($scope.roi.capitalPerUnit * $scope.roi.quantity) + TotalStartupCost) * -1;
       for (var i = 0; i < 150; i++) { //If you can't do it in 6 years...
@@ -118,9 +121,16 @@
           price: cycleResults.profit,
           roi: ROI
         });
+        $scope.roi.graphData.push({x:i, y:ROI});
        if (cycleResults.profit < 0)
          break;
       }
+
+      $scope.roi.graphSeries = [{
+        name: 'ROI',
+        color: 'steelblue',
+        data: $scope.roi.graphData
+      }];
 
 			// Compute ROI if needed
 			$scope.computeRoi();

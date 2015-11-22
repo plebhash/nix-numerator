@@ -169,6 +169,15 @@
 				</div>
 			</md-card>
 			<md-card>
+				<div class="md-actions" layout="row" layout-align="end center">
+          <rickshaw
+            rickshaw-options="roi.graphOptions"
+            rickshaw-features="roi.graphFeatures"
+            rickshaw-series="roi.graphSeries">
+          </rickshaw>
+				</div>
+			</md-card>
+			<md-card>
 				<md-card-content>
 					<md-subheader>ROI</md-subheader>
 					<p ng-show="user.gpu && user.gpu.vendor ==='Cloud'">Nothing to calculate !</p>
