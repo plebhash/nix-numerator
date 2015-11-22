@@ -13,7 +13,10 @@
 		// Init object with default value
 		$scope.user = {};
 		$scope.roi = {
-			startDate : new Date()
+			startDate : new Date(),
+      startupFixed : 400,
+      startupPerUnit : 10,
+      quantity : 1
 		};
 		$scope.earnings = {};
 		$scope.electricity = {price: 0.09};
@@ -46,10 +49,10 @@
 			// Update init capital
 			if ($scope.user.gpu.price) {
 				//Get GPU price
-				$scope.roi.capital = getGpuPriceFromEbay($scope.user.gpu.name);
+				$scope.roi.capitalPerUnit = getGpuPriceFromEbay($scope.user.gpu.name);
 				// Failed to get price from ebay
-				if ($scope.roi.capital === 0) {
-					$scope.roi.capital = $scope.user.gpu.price;
+				if ($scope.roi.capitalPerUnit === 0) {
+					$scope.roi.capitalPerUnit = $scope.user.gpu.price;
 				}
         if ($scope.user.gpu.vendor != "Cloud") {
           $scope.user.electricity = true;
@@ -82,7 +85,7 @@
        // TODO: fix logic for mid-cycle split block reward containing block 420000.
       var cycleBlock = $scope.network.nowBlock + ((preCycles + relCycle) * 2016);
       var reward = 50 * Math.pow(0.5, Math.floor(cycleBlock / 210000));
-      var winWait = futureDiff * Math.pow(2,32) / ($scope.user.gpu.hashrate * 1e9);
+      var winWait = futureDiff * Math.pow(2,32) / ($scope.user.gpu.hashrate * $scope.roi.quantity * 1e9);
       var blocksPerCycle = 1209600 / winWait; // (60*60*20*14) secs per cycle.
       var coinsPerCycle = blocksPerCycle * reward;
       return coinsPerCycle;
@@ -103,7 +106,9 @@
 		$scope.computeProfits = function () {
 
 			$scope.earnings.tab = [];
-      for (var ROI = $scope.roi.capital * -1, i = 0; i < 150; i++) { //If you can't do it in 6 years...
+      var TotalStartupCost = $scope.roi.startupFixed + ($scope.roi.startupPerUnit * $scope.roi.quantity);
+      var ROI = (($scope.roi.capitalPerUnit * $scope.roi.quantity) + TotalStartupCost) * -1;
+      for (var i = 0; i < 150; i++) { //If you can't do it in 6 years...
         var cycleResults = $scope.getCycleProfit(i); 
         ROI += cycleResults.profit;
         //output profits.
@@ -151,7 +156,7 @@
 			// Avoid unnecessary calculation if no GPU selected
 			if ($scope.user.gpu) {
 				if ($scope.user.electricity && $scope.user.gpu.power) {
-					$scope.user.gpu.costs = convertWtoKWh($scope.electricity.price, 1) * $scope.user.gpu.power;
+					$scope.user.gpu.costs = convertWtoKWh($scope.electricity.price, 1) * $scope.user.gpu.power * $scope.roi.quantity;
 				} else {
 					$scope.user.gpu.costs = undefined;
 				}
@@ -163,9 +168,9 @@
 		 * Compute ROI
 		 */
 		$scope.computeRoi = function () {
-			if ($scope.roi.capital) {
+			if ($scope.roi.capitalPerUnit) {
         if ($scope.earnings.tab[1].price > 0)
-          $scope.roi.date = new Date(moment($scope.roi.startDate).add($scope.roi.capital / $scope.earnings.tab[1].price, 'days').calendar());
+          $scope.roi.date = new Date(moment($scope.roi.startDate).add($scope.roi.capitalPerUnit / $scope.earnings.tab[1].price, 'days').calendar());
         else
           $scope.roi.date = "No break-even date";
 			}

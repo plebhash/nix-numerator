@@ -54,20 +54,6 @@
 					<h1 class="md-title">Your Hashrate: </h1>
 
 					<div layout="row" layout-sm="column" layout-align="start center">
-						<!-- Hashrate-->
-						<md-input-container>
-							<label>Hashrate in GH/s</label>
-							<input type="number" min="0" max="9999999" step="any" name="hashrate"
-							       ng-model="user.gpu.hashrate"
-							       required ng-change="resetGPU(); computeProfits();">
-
-							<div ng-messages="calculatorForm.hashrate.$error"
-							     ng-show="calculatorForm.hashrate.$dirty && calculatorForm.hashrate.$invalid">
-								<!--<div ng-message="min">Come on, don't understimate yourself !</div>-->
-								<div ng-message="max">Impossibruuuuuuuuuuuu</div>
-							</div>
-						</md-input-container>
-
 						<!-- GPU choice-->
 						<md-input-container>
 							<md-select placeholder="Select your Miner" ng-model="user.gpu" md-on-open="loadGPUs()"
@@ -95,11 +81,31 @@
 							</md-select>
 						</md-input-container>
 
+						<!-- Hashrate-->
+						<md-input-container>
+							<label>Hashrate in GH/s</label>
+							<input type="number" min="0" max="9999999" step="any" name="hashrate"
+							       ng-model="user.gpu.hashrate"
+							       required ng-change="resetGPU(); computeProfits();">
+
+							<div ng-messages="calculatorForm.hashrate.$error"
+							     ng-show="calculatorForm.hashrate.$dirty && calculatorForm.hashrate.$invalid">
+								<!--<div ng-message="min">Come on, don't understimate yourself !</div>-->
+								<div ng-message="max">Impossibruuuuuuuuuuuu</div>
+							</div>
+						</md-input-container>
+
 						<!-- Cloud pricing-->
 						<md-input-container ng-show="user.gpu.vendor ==='Cloud'">
 							<label>Instance hourly price in {{ currency }}</label>
 							<input type="number" step="0.01" ng-model="user.gpu.costs" ng-change="computeProfits()">
 						</md-input-container>
+
+            <md-input-container>
+              <label>Number of units</label>
+              <input type="number" min="1" step="20" ng-model="roi.quantity"
+                     ng-change="computeEnergyCosts(); computeProfits()">
+            </md-input-container>
 					</div>
 
 					<div layout="row" layout-sm="column">
@@ -170,12 +176,22 @@
 					<div layout="row" layout-sm="column" ng-hide="!user.gpu || user.gpu.vendor ==='Cloud'">
 						<!--<div layout="column">-->
 						<md-input-container>
-							<label>Capital in {{ currency }}</label>
-							<input type="number" step="1" ng-model="roi.capital" aria-controls="capital"
-							       ng-change="computeRoi()">
+							<label>Per Unit cost in {{ currency }}</label>
+							<input type="number" step="1" ng-model="roi.capitalPerUnit" aria-controls="capitalPerUnit"
+							       ng-change="computeProfits()">
+						</md-input-container>
+						<md-input-container>
+							<label>Fixed Startup cost in {{ currency }}</label>
+							<input type="number" step="200" ng-model="roi.startupFixed" aria-controls="startupFixed"
+							       ng-change="computeProfits()">
+						</md-input-container>
+						<md-input-container>
+							<label>Per unit startup cost in {{ currency }}</label>
+							<input type="number" step="1" ng-model="roi.startupPerUnit" aria-controls="startupPerUnit"
+							       ng-change="computeProfits()">
 						</md-input-container>
 						<md-datepicker ng-model="roi.startDate" md-placeholder="Enter mining start date"
-						               ng-change="computeRoi()"></md-datepicker>
+						               ng-change="computeProfits()"></md-datepicker>
 						<!--</div>-->
 					</div>
 				</md-card-content>
