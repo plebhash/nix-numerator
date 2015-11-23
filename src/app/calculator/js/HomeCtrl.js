@@ -25,12 +25,6 @@
     }];
     $scope.options = {
       renderer: 'line',
-      padding: {
-        top: 0.04,
-        right: 0.04,
-        bottom: 0.04,
-        left: 0.04
-      },
       min: 'auto'
     };
     $scope.features = {
@@ -92,8 +86,9 @@
 
     $scope.cycleEarning = function (relCycle) {
       var diffPower = (100 + $scope.network.diffIncrease)/100;
-      var now = moment();
-      var preDays = now.diff(moment($scope.roi.startDate), 'days');
+      var startMoment = moment($scope.roi.startDate);
+      var preDays = startMoment.diff(moment(), 'days');
+      console.log(preDays);
       // TODO: Handle non exact cycle starts (initial partial cycle).
       var preCycles = Math.floor(preDays / 14);
       var futureDiff;
