@@ -169,13 +169,15 @@
 				</div>
 			</md-card>
 			<md-card>
-				<div class="md-actions" layout="row" layout-align="end center">
-          <rickshaw
-            rickshaw-options="roi.graphOptions"
-            rickshaw-features="roi.graphFeatures"
-            rickshaw-series="roi.graphSeries">
-          </rickshaw>
-				</div>
+				<md-card-content>
+          <div class="md-actions" layout="row" layout-align="end center">
+            <rickshaw
+              rickshaw-options="options"
+              rickshaw-features="features"
+              rickshaw-series="series">
+            </rickshaw>
+          </div>
+				</md-card-content>
 			</md-card>
 			<md-card>
 				<md-card-content>
@@ -281,7 +283,7 @@
 <script type="text/javascript">
 
 	angular
-			.module('calculatorApp', ['ngMaterial', 'calculator'])
+			.module('calculatorApp', ['ngMaterial', 'angular-rickshaw', 'calculator'])
 			.config(function ($mdThemingProvider, $mdIconProvider) {
 
 //					https://www.google.com/design/icons/

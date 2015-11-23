@@ -115,3 +115,8 @@ span.name {
 .dialogdemoBasicUsage #popupContainer {
     position: relative;
 }
+
+.rickshaw_graph {
+  height: 40em;
+  width: 100%;
+}

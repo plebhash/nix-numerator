@@ -16,10 +16,29 @@
 			startDate : new Date(),
       startupFixed : 400,
       startupPerUnit : 10,
-      quantity : 1,
-      graphOptions : { renderer: 'line' },
-      graphData : []
+      quantity : 1
 		};
+    $scope.series = [{
+      name: 'ROI',
+      color: 'steelblue',
+      data : []
+    }];
+    $scope.options = {
+      renderer: 'line',
+      padding: {
+        top: 0.04,
+        right: 0.04,
+        bottom: 0.04,
+        left: 0.04
+      },
+      min: 'auto'
+    };
+    $scope.features = {
+      yAxis: {
+        tickFormat : Rickshaw.Fixtures.Number.formatKMBT 
+      }
+    };
+
 		$scope.earnings = {};
 		$scope.electricity = {price: 0.09};
 		$scope.network = {
@@ -108,7 +127,8 @@
 		$scope.computeProfits = function () {
 
 			$scope.earnings.tab = [];
-      $scope.roi.graphData = [];
+      var graphData = [];
+      var graphBreakEven = [];
       var TotalStartupCost = $scope.roi.startupFixed + ($scope.roi.startupPerUnit * $scope.roi.quantity);
       var ROI = (($scope.roi.capitalPerUnit * $scope.roi.quantity) + TotalStartupCost) * -1;
       for (var i = 0; i < 150; i++) { //If you can't do it in 6 years...
@@ -121,16 +141,22 @@
           price: cycleResults.profit,
           roi: ROI
         });
-        $scope.roi.graphData.push({x:i, y:ROI});
+        graphData.push({x:i, y:ROI});
+        graphBreakEven.push({x:i, y:0});
        if (cycleResults.profit < 0)
          break;
       }
 
-      $scope.roi.graphSeries = [{
+      $scope.series[0] = {
         name: 'ROI',
         color: 'steelblue',
-        data: $scope.roi.graphData
-      }];
+        data: graphData
+      };
+      $scope.series[1] = {
+        name: 'Break-even',
+        color: 'lightcoral',
+        data: graphBreakEven
+      };
 
 			// Compute ROI if needed
 			$scope.computeRoi();
