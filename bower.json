@@ -14,6 +14,11 @@
     "angular-rickshaw": "~0.10.0",
     "rickshaw": "~1.5.1"
   },
+  "overrides": {
+    "rickshaw": {
+      "main": ["rickshaw.css", "rickshaw.js"]
+    }
+  },
   "devDependencies": {
     "angular-mocks": "^1.4.x",
     "material-design-icons": "~2.0.0"
