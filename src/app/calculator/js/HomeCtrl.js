@@ -29,9 +29,17 @@
     };
     $scope.features = {
       yAxis: {
-        tickFormat : Rickshaw.Fixtures.Number.formatKMBT 
+        tickFormat : 'unrespected value!' //Rickshaw.Fixtures.Number.formatKMBT 
+      },
+      xAxis: {
+        timeUnit : 'month'
       }
     };
+    // $scope.y_ticks = new Rickshaw.Graph.Axis.Y({
+    //   element: document.getElementById('y_axis'),
+    //   graph: graph,
+    //   tickFormat : Rickshaw.Fixtures.Number.formatKMBT
+    // });
 
 		$scope.earnings = {};
 		$scope.electricity = {price: 0.09};
@@ -80,15 +88,19 @@
     // Currently unused, planned for "period ending: 2016-10-25" style output.
     $scope.relCycleToDate = function (relCycle) {
       var dayOffset = relCycle * 14;
-      var cycleDate = new Date(moment($scope.roi.startDate).add(dayOffset, 'days').calendar());
+      var cycleDate = moment($scope.roi.startDate).add(dayOffset, 'days').format("MMM DD");
       return cycleDate;
+    };
+
+    $scope.relCycleToEpoch = function (relCycle) {
+      var cycleEpoch = moment($scope.roi.startDate).unix() + (86400 * 14 * relCycle);
+      return cycleEpoch;
     };
 
     $scope.cycleEarning = function (relCycle) {
       var diffPower = (100 + $scope.network.diffIncrease)/100;
       var startMoment = moment($scope.roi.startDate);
       var preDays = startMoment.diff(moment(), 'days');
-      console.log(preDays);
       // TODO: Handle non exact cycle starts (initial partial cycle).
       var preCycles = Math.floor(preDays / 14);
       var futureDiff;
@@ -131,13 +143,14 @@
         ROI += cycleResults.profit;
         //output profits.
         $scope.earnings.tab.push({
-          label: 'Cycle ' + i,
+          label: $scope.relCycleToDate(i),
           eth: cycleResults.coins,
           price: cycleResults.profit,
           roi: ROI
         });
-        graphData.push({x:i, y:ROI});
-        graphBreakEven.push({x:i, y:0});
+        var graphX = $scope.relCycleToEpoch(i);
+        graphData.push({x:graphX, y:ROI});
+        graphBreakEven.push({x:graphX, y:0});
        if (cycleResults.profit < 0)
          break;
       }
