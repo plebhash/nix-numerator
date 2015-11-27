@@ -7,7 +7,7 @@
 	angular.module('calculator', [ 'ngMaterial', 'angular-rickshaw' ]);
 
 	angular
-		.module('calculator', [])
+		.module('calculator')
 		.controller('HomeCtrl', HomeCtrl);
 	function HomeCtrl($scope, $mdToast, $mdDialog, $http, $locale) {
 		// Init object with default value
