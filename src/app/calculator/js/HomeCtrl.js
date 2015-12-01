@@ -281,7 +281,7 @@
       //
       //
 		$scope.init = function () {
-			$http.get("http://coinmarketcap-nexuist.rhcloud.com/api/btc")
+			$http.get("https://coinmarketcap-nexuist.rhcloud.com/api/btc")
 				.success(function (data) {
 					$scope.network.market = data;
 					fillPrices(data.price);
