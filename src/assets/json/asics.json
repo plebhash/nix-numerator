@@ -14,5 +14,21 @@
     "hashrate": 2000,
     "power": 1200,
     "price": 1000
+  },
+  {
+    "vendor": "Avalon",
+    "name": "Avalon6",
+    "os": "",
+    "hashrate": 3650,
+    "power": 1160,
+    "price": 1520
+  },
+  {
+    "vendor": "Spondoolies",
+    "name": "SP35",
+    "os": "",
+    "hashrate": 5500,
+    "power": 3000,
+    "price": 2235
   }
 ]
