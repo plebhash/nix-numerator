@@ -316,7 +316,7 @@
 		 */
 		var fillPrices = function (price) {
 			$scope.user.price = {};
-			$scope.user.price.usd = parseFloat(price.usd, 10);
+			$scope.user.price.usd = parseInt(price.usd, 10);
 		};
 
 		/**
