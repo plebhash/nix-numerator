@@ -2,22 +2,22 @@
  * Created by Anthony on 31/08/2015.
  */
 (function () {
-	'use strict';
-	// Prepare the 'calculator' module for subsequent registration of controllers and delegates
-	angular.module('calculator', [ 'ngMaterial', 'angular-rickshaw' ]);
+  'use strict';
+  // Prepare the 'calculator' module for subsequent registration of controllers and delegates
+  angular.module('calculator', [ 'ngMaterial', 'angular-rickshaw' ]);
 
-	angular
-		.module('calculator')
-		.controller('HomeCtrl', HomeCtrl);
-	function HomeCtrl($scope, $mdToast, $mdDialog, $http, $locale) {
-		// Init object with default value
-		$scope.user = {};
-		$scope.roi = {
-			startDate : new Date(),
+  angular
+    .module('calculator')
+    .controller('HomeCtrl', HomeCtrl);
+  function HomeCtrl($scope, $mdToast, $mdDialog, $http, $locale) {
+    // Init object with default value
+    $scope.user = {};
+    $scope.roi = {
+      startDate : new Date(),
       startupFixed : 400,
       startupPerUnit : 10,
       quantity : 1
-		};
+    };
     $scope.series = [{
       name: 'ROI',
       color: 'steelblue',
@@ -41,49 +41,49 @@
     //   tickFormat : Rickshaw.Fixtures.Number.formatKMBT
     // });
 
-		$scope.earnings = {};
-		$scope.electricity = {price: 0.09};
-		$scope.network = {
-			hashrate: 0,
+    $scope.earnings = {};
+    $scope.electricity = {price: 0.09};
+    $scope.network = {
+      hashrate: 0,
       diffIncrease: 3,
       linearDiff: false,
-			blockTime: 600,
-			ethPrice: 300.0
-		};
-		$scope.gpus = [];
-		$scope.currency = $locale.NUMBER_FORMATS.CURRENCY_SYM;
-		$scope.currencies = [
-			{
-				name: 'USD',
-				sym: $locale.NUMBER_FORMATS.CURRENCY_SYM
-			}
-		];
+      blockTime: 600,
+      ethPrice: 300.0
+    };
+    $scope.gpus = [];
+    $scope.currency = $locale.NUMBER_FORMATS.CURRENCY_SYM;
+    $scope.currencies = [
+      {
+        name: 'USD',
+        sym: $locale.NUMBER_FORMATS.CURRENCY_SYM
+      }
+    ];
 
-		$scope.showSimpleToast = function (message) {
-			$mdToast.show(
-				$mdToast.simple()
-					.content(message)
-					.position('bottom right')
-					.hideDelay(3000)
-			);
-		};
+    $scope.showSimpleToast = function (message) {
+      $mdToast.show(
+        $mdToast.simple()
+          .content(message)
+          .position('bottom right')
+          .hideDelay(3000)
+      );
+    };
 
-		$scope.selectGPU = function () {
-			// Update init capital
-			if ($scope.user.gpu.price) {
-				//Get GPU price
-				$scope.roi.capitalPerUnit = getGpuPriceFromEbay($scope.user.gpu.name);
-				// Failed to get price from ebay
-				if ($scope.roi.capitalPerUnit === 0) {
-					$scope.roi.capitalPerUnit = $scope.user.gpu.price;
-				}
+    $scope.selectGPU = function () {
+      // Update init capital
+      if ($scope.user.gpu.price) {
+        //Get GPU price
+        $scope.roi.capitalPerUnit = getGpuPriceFromEbay($scope.user.gpu.name);
+        // Failed to get price from ebay
+        if ($scope.roi.capitalPerUnit === 0) {
+          $scope.roi.capitalPerUnit = $scope.user.gpu.price;
+        }
         if ($scope.user.gpu.vendor != "Cloud") {
           $scope.user.electricity = true;
         }
-			}
-			// Compute profits
-			$scope.computeEnergyCosts();
-		};
+      }
+      // Compute profits
+      $scope.computeEnergyCosts();
+    };
 
     // Currently unused, planned for "period ending: 2016-10-25" style output.
     $scope.relCycleToDate = function (relCycle) {
@@ -128,12 +128,12 @@
       return cycleResults;
     };
 
-		/**
-		 * Compute profits
-		 */
-		$scope.computeProfits = function () {
+    /**
+     * Compute profits
+     */
+    $scope.computeProfits = function () {
 
-			$scope.earnings.tab = [];
+      $scope.earnings.tab = [];
       var graphData = [];
       var graphBreakEven = [];
       var TotalStartupCost = $scope.roi.startupFixed + ($scope.roi.startupPerUnit * $scope.roi.quantity);
@@ -166,91 +166,91 @@
         data: graphBreakEven
       };
 
-			// Compute ROI if needed
-			$scope.computeRoi();
-		};
+      // Compute ROI if needed
+      $scope.computeRoi();
+    };
 
-		/**
-		 * Async load of GPU list
-		 */
-		$scope.loadGPUs = function () {
-			// Fill list of GPUs
-			$http.get("./assets/json/asics.json")
-				.success(function (data) {
-					$scope.gpus = data;
-				}).error(function (data, status) {
-					console.log("And we just got hit by a " + status + " !!!");
-				});
-		};
+    /**
+     * Async load of GPU list
+     */
+    $scope.loadGPUs = function () {
+      // Fill list of GPUs
+      $http.get("./assets/json/asics.json")
+        .success(function (data) {
+          $scope.gpus = data;
+        }).error(function (data, status) {
+          console.log("And we just got hit by a " + status + " !!!");
+        });
+    };
 
-		/**
-		 * Convert Watts to KWh for a given time (in hours)
-		 * @param watts
-		 * @param hours
-		 * @returns {number}
-		 */
-		var convertWtoKWh = function (watts, hours) {
-			return hours * watts / 1000;
-		};
+    /**
+     * Convert Watts to KWh for a given time (in hours)
+     * @param watts
+     * @param hours
+     * @returns {number}
+     */
+    var convertWtoKWh = function (watts, hours) {
+      return hours * watts / 1000;
+    };
 
-		/**
-		 * Compute energy costs
-		 */
-		$scope.computeEnergyCosts = function () {
-			// Avoid unnecessary calculation if no GPU selected
-			if ($scope.user.gpu) {
-				if ($scope.user.electricity && $scope.user.gpu.power) {
-					$scope.user.gpu.costs = convertWtoKWh($scope.electricity.price, 1) * $scope.user.gpu.power * $scope.roi.quantity;
-				} else {
-					$scope.user.gpu.costs = undefined;
-				}
-				// Compute profits again
-				$scope.computeProfits();
-			}
-		};
-		/**
-		 * Compute ROI
-		 */
-		$scope.computeRoi = function () {
-			if ($scope.roi.capitalPerUnit) {
+    /**
+     * Compute energy costs
+     */
+    $scope.computeEnergyCosts = function () {
+      // Avoid unnecessary calculation if no GPU selected
+      if ($scope.user.gpu) {
+        if ($scope.user.electricity && $scope.user.gpu.power) {
+          $scope.user.gpu.costs = convertWtoKWh($scope.electricity.price, 1) * $scope.user.gpu.power * $scope.roi.quantity;
+        } else {
+          $scope.user.gpu.costs = undefined;
+        }
+        // Compute profits again
+        $scope.computeProfits();
+      }
+    };
+    /**
+     * Compute ROI
+     */
+    $scope.computeRoi = function () {
+      if ($scope.roi.capitalPerUnit) {
         if ($scope.earnings.tab[1].price > 0)
           $scope.roi.date = new Date(moment($scope.roi.startDate).add($scope.roi.capitalPerUnit / $scope.earnings.tab[1].price, 'days').calendar());
         else
           $scope.roi.date = "No break-even date";
-			}
-		};
+      }
+    };
 
-		/**
-		 * Get best price from Ebay
-		 * @param name
-		 * @returns {number}
-		 */
-		var getGpuPriceFromEbay = function (name) {
-			return 0;
-			// TODO http://developer.ebay.com/Devzone/finding/Concepts/MakingACall.html
-			//$http.post("http://coinmarketcap-nexuist.rhcloud.com/api/eth", {
-			//	"tns.findItemsByKeywordsRequest": {"keywords": name}
-			//}).success(function (data) {
-			//	return 0;
-			//}).error(function (data, status) {
-			//	console.log("And we just got hit by a " + status + " !!!");
-			//	return 0;
-			//});
-		};
+    /**
+     * Get best price from Ebay
+     * @param name
+     * @returns {number}
+     */
+    var getGpuPriceFromEbay = function (name) {
+      return 0;
+      // TODO http://developer.ebay.com/Devzone/finding/Concepts/MakingACall.html
+      //$http.post("http://coinmarketcap-nexuist.rhcloud.com/api/eth", {
+      //  "tns.findItemsByKeywordsRequest": {"keywords": name}
+      //}).success(function (data) {
+      //  return 0;
+      //}).error(function (data, status) {
+      //  console.log("And we just got hit by a " + status + " !!!");
+      //  return 0;
+      //});
+    };
 
-		/**
-		 * Reset GPU selection
-		 */
-		$scope.resetGPU = function () {
-			var tmp = $scope.user.gpu.hashrate;
-			$scope.user.gpu = {
-				hashrate: tmp
-			};
-		};
+    /**
+     * Reset GPU selection
+     */
+    $scope.resetGPU = function () {
+      var tmp = $scope.user.gpu.hashrate;
+      $scope.user.gpu = {
+        hashrate: tmp
+      };
+    };
 
-		/**
-		 * Get all useful data
-		 */
+    /**
+     * Get all useful data
+     */
       // TODO: refactor get requests into function call.
       //
       // function multiCall(requests) {
@@ -280,82 +280,82 @@
       // multiCall(requests);
       //
       //
-		$scope.init = function () {
-			$http.get("https://coinmarketcap-nexuist.rhcloud.com/api/btc")
-				.success(function (data) {
-					$scope.network.market = data;
-					fillPrices(data.price);
-				}).error(function (data, status) {
-					$scope.showSimpleToast("Failed to load Network data from coinmarketcap-nexuist.rhcloud.com :-/");
-					console.log("And we just got hit by a " + status + " !!!");
-					$scope.user.price.usd = 0;
-				});
-			$http.get("https://blockexplorer.com/api/status?q=getDifficulty")
-				.success(function (resp) {
-					$scope.network.difficulty = Math.floor(resp.difficulty);
-				}).error(function (data, status) {
-					$scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
-					console.log("And we just got hit by a " + status + " HTTP status !!!");
-					//DEV
-					$scope.network.blockTime = 1;
-					$scope.network.difficulty = 2;
-				});
-			$http.get("https://blockexplorer.com/api/status?q=getBlockCount")
-				.success(function (resp) {
-					$scope.network.nowBlock = resp.blockcount;
-				}).error(function (data, status) {
-					$scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
-					console.log("And we just got hit by a " + status + " HTTP status !!!");
+    $scope.init = function () {
+      $http.get("https://coinmarketcap-nexuist.rhcloud.com/api/btc")
+        .success(function (data) {
+          $scope.network.market = data;
+          fillPrices(data.price);
+        }).error(function (data, status) {
+          $scope.showSimpleToast("Failed to load Network data from coinmarketcap-nexuist.rhcloud.com :-/");
+          console.log("And we just got hit by a " + status + " !!!");
+          $scope.user.price.usd = 0;
+        });
+      $http.get("https://blockexplorer.com/api/status?q=getDifficulty")
+        .success(function (resp) {
+          $scope.network.difficulty = Math.floor(resp.difficulty);
+        }).error(function (data, status) {
+          $scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
+          console.log("And we just got hit by a " + status + " HTTP status !!!");
+          //DEV
+          $scope.network.blockTime = 1;
+          $scope.network.difficulty = 2;
+        });
+      $http.get("https://blockexplorer.com/api/status?q=getBlockCount")
+        .success(function (resp) {
+          $scope.network.nowBlock = resp.blockcount;
+        }).error(function (data, status) {
+          $scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
+          console.log("And we just got hit by a " + status + " HTTP status !!!");
           $scope.network.nowBlock = 1;
-				});
-		};
+        });
+    };
 
-		/**
-		 * Fill prices (str -> float)
-		 * @param price
-		 */
-		var fillPrices = function (price) {
-			$scope.user.price = {};
-			$scope.user.price.usd = parseInt(price.usd, 10);
-		};
+    /**
+     * Fill prices (str -> float)
+     * @param price
+     */
+    var fillPrices = function (price) {
+      $scope.user.price = {};
+      $scope.user.price.usd = parseInt(price.usd, 10);
+    };
 
-		/**
-		 * Reset inputs
-		 */
-		$scope.reset = function () {
-			$scope.user = {};
-			fillPrices($scope.network.market.price);
-			$scope.showSimpleToast('Parameters reset');
-		};
+    /**
+     * Reset inputs
+     */
+    $scope.reset = function () {
+      $scope.user = {};
+      fillPrices($scope.network.market.price);
+      $scope.showSimpleToast('Parameters reset');
+    };
 
-		$scope.showAdvanced = function (ev) {
-			$mdDialog.show({
-				controller: DialogController,
-				templateUrl: 'src/calculator/html/powersupply.tmpl.html',
-				parent: angular.element(document.body),
-				targetEvent: ev,
-				clickOutsideToClose: true,
-				locals: {
-					gpu: $scope.user.gpu
-				}
-			})
-				.then(function (power) {
-					$scope.user.gpu.power = power;
-					$scope.computeEnergyCosts();
-					$scope.status = 'You said the information was "' + power + '".';
-				}, function () {
-					$scope.status = 'You cancelled the dialog.';
-				});
-		};
-		function DialogController($scope, $mdDialog, gpu) {
-			$scope.gpu = gpu;
+    $scope.showAdvanced = function (ev) {
+      $mdDialog.show({
+        controller: DialogController,
+        templateUrl: 'src/calculator/html/powersupply.tmpl.html',
+        parent: angular.element(document.body),
+        targetEvent: ev,
+        clickOutsideToClose: true,
+        locals: {
+          gpu: $scope.user.gpu
+        }
+      })
+        .then(function (power) {
+          $scope.user.gpu.power = power;
+          $scope.computeEnergyCosts();
+          $scope.status = 'You said the information was "' + power + '".';
+        }, function () {
+          $scope.status = 'You cancelled the dialog.';
+        });
+    };
+    function DialogController($scope, $mdDialog, gpu) {
+      $scope.gpu = gpu;
 
-			$scope.hide = function () {
-				$mdDialog.hide($scope.gpu.power);
-			};
-			$scope.cancel = function () {
-				$mdDialog.cancel();
-			};
-		}
-	}
+      $scope.hide = function () {
+        $mdDialog.hide($scope.gpu.power);
+      };
+      $scope.cancel = function () {
+        $mdDialog.cancel();
+      };
+    }
+  }
 })();

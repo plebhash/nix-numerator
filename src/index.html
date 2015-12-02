@@ -1,57 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Mining Calculator</title>
+  <title>Mining Calculator</title>
 
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="description" content="">
-	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
 
-	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
 
-	<!-- build:css({.tmp/serve,src}) styles/vendor.css -->
-	<!-- bower:css -->
-	<!-- run `gulp inject` to automatically populate bower styles dependencies -->
-	<!-- endbower -->
-	<!-- endbuild -->
+  <!-- build:css({.tmp/serve,src}) styles/vendor.css -->
+  <!-- bower:css -->
+  <!-- run `gulp inject` to automatically populate bower styles dependencies -->
+  <!-- endbower -->
+  <!-- endbuild -->
 
-	<!-- build:css({.tmp/serve,src}) styles/app.css -->
-	<!-- inject:css -->
-	<!-- css files will be automatically insert here -->
-	<!-- endinject -->
-	<!-- endbuild -->
+  <!-- build:css({.tmp/serve,src}) styles/app.css -->
+  <!-- inject:css -->
+  <!-- css files will be automatically insert here -->
+  <!-- endinject -->
+  <!-- endbuild -->
 </head>
 
 <body ng-app="calculatorApp" layout="column" ng-controller="HomeCtrl as home" data-ng-init="init()">
 <!--[if lt IE 10]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-	your browser</a> to improve your experience.</p>
+  your browser</a> to improve your experience.</p>
 <![endif]-->
 
 <!--Header-->
 <md-toolbar layout="row" layout-sm="column" class="md-whiteframe-z1" layout-align="center center">
-	<div flex layout-fill>
-		<h1>Mining Calculator</h1>
-	</div>
-	<div flex layout="row" layout-align="end center">
-		<md-select ng-model="currency" aria-label="Local Currency">
+  <div flex layout-fill>
+    <h1>Mining Calculator</h1>
+  </div>
+  <div flex layout="row" layout-align="end center">
+    <md-select ng-model="currency" aria-label="Local Currency">
       <md-option  ng-repeat="cur in currencies" aria-label="{{cur.name}}" value="{{cur.sym}}">{{cur.name}} ({{cur.sym}})</md-option>
-		</md-select>
-		<md-button href="https://github.com/findkiko/ethereum-mining-calculator" class="md-icon-button"
-		           aria-label="About">
-			<md-icon md-svg-icon="help"></md-icon>
-		</md-button>
-	</div>
+    </md-select>
+    <md-button href="https://github.com/findkiko/ethereum-mining-calculator" class="md-icon-button"
+               aria-label="About">
+      <md-icon md-svg-icon="help"></md-icon>
+    </md-button>
+  </div>
 </md-toolbar>
 
 <!--Main-->
 <div layout="column" tabIndex="-1" role="main" class="md-whiteframe-z2">
-	<form name="calculatorForm">
-		<md-content id="content">
-			<md-card>
-				<md-card-content>
-					<md-subheader>Miner Performance</md-subheader>
+  <form name="calculatorForm">
+    <md-content id="content">
+      <md-card>
+        <md-card-content>
+          <md-subheader>Miner Performance</md-subheader>
           <div layout="row" layout-sm="column" layout-align="start center">
             <!-- GPU choice-->
             <md-input-container flex>
@@ -155,13 +155,13 @@
               </md-input-container>
             </div>
           </div>
-				</md-card-content>
-				<div class="md-actions" layout="row" layout-align="end center">
-					<md-button class="md-raised md-warn" ng-click="reset()">Reset</md-button>
-				</div>
-			</md-card>
-			<md-card>
-				<md-card-content>
+        </md-card-content>
+        <div class="md-actions" layout="row" layout-align="end center">
+          <md-button class="md-raised md-warn" ng-click="reset()">Reset</md-button>
+        </div>
+      </md-card>
+      <md-card>
+        <md-card-content>
           <div class="md-actions" layout="row" layout-align="end center">
             <rickshaw
               rickshaw-options="options"
@@ -169,88 +169,88 @@
               rickshaw-series="series">
             </rickshaw>
           </div>
-				</md-card-content>
-			</md-card>
-			<md-card>
-				<md-card-content>
-					<md-subheader>Cost Base</md-subheader>
+        </md-card-content>
+      </md-card>
+      <md-card>
+        <md-card-content>
+          <md-subheader>Cost Base</md-subheader>
               <!-- Start Diff-->
-					<p ng-show="user.gpu && user.gpu.vendor ==='Cloud'">Nothing to calculate !</p>
+          <p ng-show="user.gpu && user.gpu.vendor ==='Cloud'">Nothing to calculate !</p>
 
-					<div layout="row" layout-sm="column" ng-hide="!user.gpu || user.gpu.vendor ==='Cloud'">
-						<!--<div layout="column">-->
-						<md-input-container>
-							<label>Per Unit cost in {{ currency }}</label>
-							<input type="number" step="1" ng-model="roi.capitalPerUnit" aria-controls="capitalPerUnit"
-							       ng-change="computeProfits()">
-						</md-input-container>
-						<md-input-container>
-							<label>Fixed Startup cost in {{ currency }}</label>
-							<input type="number" step="200" ng-model="roi.startupFixed" aria-controls="startupFixed"
-							       ng-change="computeProfits()">
-						</md-input-container>
-						<md-input-container>
-							<label>Per unit startup cost in {{ currency }}</label>
-							<input type="number" step="1" ng-model="roi.startupPerUnit" aria-controls="startupPerUnit"
-							       ng-change="computeProfits()">
-						</md-input-container>
-						<!--</div>-->
-					</div>
-				</md-card-content>
-			</md-card>
-			<md-card>
-				<md-card-content>
-					<md-subheader>Earnings</md-subheader>
-					<md-list ng-repeat="earning in earnings.tab">
-						<md-list-item>
-							<p>{{earning.label}}</p>
+          <div layout="row" layout-sm="column" ng-hide="!user.gpu || user.gpu.vendor ==='Cloud'">
+            <!--<div layout="column">-->
+            <md-input-container>
+              <label>Per Unit cost in {{ currency }}</label>
+              <input type="number" step="1" ng-model="roi.capitalPerUnit" aria-controls="capitalPerUnit"
+                     ng-change="computeProfits()">
+            </md-input-container>
+            <md-input-container>
+              <label>Fixed Startup cost in {{ currency }}</label>
+              <input type="number" step="200" ng-model="roi.startupFixed" aria-controls="startupFixed"
+                     ng-change="computeProfits()">
+            </md-input-container>
+            <md-input-container>
+              <label>Per unit startup cost in {{ currency }}</label>
+              <input type="number" step="1" ng-model="roi.startupPerUnit" aria-controls="startupPerUnit"
+                     ng-change="computeProfits()">
+            </md-input-container>
+            <!--</div>-->
+          </div>
+        </md-card-content>
+      </md-card>
+      <md-card>
+        <md-card-content>
+          <md-subheader>Earnings</md-subheader>
+          <md-list ng-repeat="earning in earnings.tab">
+            <md-list-item>
+              <p>{{earning.label}}</p>
 
-							<p>{{earning.eth|number:6}} XBT</p>
+              <p>{{earning.eth|number:6}} XBT</p>
 
-							<p ng-style="earning.price < 0 && {'color': 'red'}">
-								{{earning.price | currency:undefined:2}}
-							</p>
+              <p ng-style="earning.price < 0 && {'color': 'red'}">
+                {{earning.price | currency:undefined:2}}
+              </p>
 
-							<p ng-style="earning.roi < 0 && {'color': 'red'}">
-								{{earning.roi | currency:undefined:2}}
-							</p>
-						</md-list-item>
-						<md-divider ng-hide="earning.last"></md-divider>
-					</md-list>
-				</md-card-content>
-			</md-card>
-			<md-card>
-				<md-card-content>
-					<h1 class="md-title">Notes</h1>
+              <p ng-style="earning.roi < 0 && {'color': 'red'}">
+                {{earning.roi | currency:undefined:2}}
+              </p>
+            </md-list-item>
+            <md-divider ng-hide="earning.last"></md-divider>
+          </md-list>
+        </md-card-content>
+      </md-card>
+      <md-card>
+        <md-card-content>
+          <h1 class="md-title">Notes</h1>
 
-					<p><i>Average block time</i> is calculated over the 64 last blocks.<br>
-					</p>
+          <p><i>Average block time</i> is calculated over the 64 last blocks.<br>
+          </p>
 
-					<p>References :
-					<ul>
-						<li>
-							<a href="https://forum.ethereum.org/discussion/2134/gpu-mining-is-out-come-and-let-us-know-of-your-bench-scores">GPU
-								Mining score</a>
-						</li>
-						<li>
-							Bitcoin Charts & data on <a href="http://coinmarketcap.com/currencies/bitcoin/">CoinMarketCap</a>
-						</li>
-						<li>
-							KWh price (Residential June 2015) from <a
-								href="http://www.eia.gov/electricity/monthly/epm_table_grapher.cfm?t=epmt_5_6_a">eia.gov</a>
-						</li>
-					</ul>
-					Source code can be found <a href="https://github.com/anthonygraignic/ethereum-mining-calculator">here</a>.
-					</p>
-				</md-card-content>
-				<md-card-footer>
-					Donate to the creator: <a
-						href="https://etherchain.org/account/0x1d4f6afc0e305048ae0a9be9f76b4b89d4a360a5">
-					0x1d4f6afc0e305048ae0a9be9f76b4b89d4a360a5</a>
-				</md-card-footer>
-			</md-card>
-		</md-content>
-	</form>
+          <p>References :
+          <ul>
+            <li>
+              <a href="https://forum.ethereum.org/discussion/2134/gpu-mining-is-out-come-and-let-us-know-of-your-bench-scores">GPU
+                Mining score</a>
+            </li>
+            <li>
+              Bitcoin Charts & data on <a href="http://coinmarketcap.com/currencies/bitcoin/">CoinMarketCap</a>
+            </li>
+            <li>
+              KWh price (Residential June 2015) from <a
+                href="http://www.eia.gov/electricity/monthly/epm_table_grapher.cfm?t=epmt_5_6_a">eia.gov</a>
+            </li>
+          </ul>
+          Source code can be found <a href="https://github.com/anthonygraignic/ethereum-mining-calculator">here</a>.
+          </p>
+        </md-card-content>
+        <md-card-footer>
+          Donate to the creator: <a
+            href="https://etherchain.org/account/0x1d4f6afc0e305048ae0a9be9f76b4b89d4a360a5">
+          0x1d4f6afc0e305048ae0a9be9f76b4b89d4a360a5</a>
+        </md-card-footer>
+      </md-card>
+    </md-content>
+  </form>
 </div>
 
 <!-- build:js(src) scripts/vendor.js -->
@@ -273,18 +273,18 @@
 
 <script type="text/javascript">
 
-	angular
-			.module('calculatorApp', ['ngMaterial', 'angular-rickshaw', 'calculator'])
-			.config(function ($mdThemingProvider, $mdIconProvider) {
+  angular
+      .module('calculatorApp', ['ngMaterial', 'angular-rickshaw', 'calculator'])
+      .config(function ($mdThemingProvider, $mdIconProvider) {
 
-//					https://www.google.com/design/icons/
-				$mdIconProvider.icon("help", "./assets/svg/ic_help_48px.svg", 48)
-						.icon("power", "./assets/svg/ic_power_48px.svg", 48)
-				;
+//          https://www.google.com/design/icons/
+        $mdIconProvider.icon("help", "./assets/svg/ic_help_48px.svg", 48)
+            .icon("power", "./assets/svg/ic_power_48px.svg", 48)
+        ;
 
-				$mdThemingProvider.theme('default');
+        $mdThemingProvider.theme('default');
 
-			});
+      });
 
 </script>
 
