@@ -23,9 +23,7 @@ Power is usually express in [Watt](https://en.wikipedia.org/wiki/Watt) unit. Vol
 Note: for cloud instances, power consumption is included in the instance price. This section is therefore disabled for cloud mining.
 
 #### Electricity price
-
-* In Europe [eurostat](http://ec.europa.eu/eurostat/statistics-explained/index.php/Energy_price_statistics)
-* In America [eia.gov]( http://www.eia.gov/electricity/monthly/epm_table_grapher.cfm?t=epmt_5_6_a)
+Adjust to suit your location. This section is disabled for cloud miner selections, as costs are included in hourly prices.
 
 ### ROI
 The card "ROI" doesn't display the [rate](https://en.wikipedia.org/wiki/Return_on_investment) in percentage but rather the exact date when ROI=0.
