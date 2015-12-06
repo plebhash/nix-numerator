@@ -1,7 +1,7 @@
-# Ethereum Mining Profitability Calculator
-Calculate your mining profitability from last network & currencies info.
+# Mining Calculator
+Calculate your mining profitability based on network and performance parameters.
 
-Simple choose a GPU from the [list](app/assets/json/gpus.json) or set your hashrate and let the magic happen !
+First choose a miner model from the dropdown [list](app/assets/json/asics.json) and let the magic happen!
 
 To enjoy all the features, we recommend that you select your GPU.
 If your GPU is not in the list, open an issue or post it on [GPU Mining bench scores](http://forum.ethereum.org/discussion/2134/gpu-mining-is-out-come-and-let-us-know-of-your-bench-scores).
