@@ -12,7 +12,7 @@ If your GPU is not in the list, open an issue or post it on [GPU Mining bench sc
 Network hashrate & blocktime are calculated over the last 64 blocks from [Etherchain.org](https://etherchain.org/api/basic_stats)
 
 ### Price calculation
-ETH/USD from [CoinMarketCap](http://coinmarketcap.com/currencies/ethereum/)
+XBT/USD from [CoinMarketCap](http://coinmarketcap.com/currencies/bitcoin/)
 
 ### GPU Power consumption
 Data are from specs or [eXtreme Power Supply Calculator](http://outervision.com/power-supply-calculator).
