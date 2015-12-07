@@ -23,14 +23,7 @@ Note: for cloud instances, power consumption is included in the instance price. 
 Adjust to suit your location. This section is also disabled for cloud miner selections as costs are included in hourly prices.
 
 ### ROI
-The card "ROI" doesn't display the [rate](https://en.wikipedia.org/wiki/Return_on_investment) in percentage but rather the exact date when ROI=0.
-Corresponding to the moment you will start making benefits.s
-In fact, it's too early to predict how ETH will evolve.
-As soon as trends are well establish, more rates and other stuff will be added.
-
-If you chose a GPU, the capital will automatically be fulfilled with its price.
-
-You can change the starting date in case you didn't wait for this calculator to mine.
+The simulation ends after the first non-profitable cycle or 6 years, whichever is the sooner.
 
 ## Todo
 * Average network stats on more blocks (>64) to get stable value
