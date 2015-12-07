@@ -17,8 +17,7 @@ XBT/USD from [CoinMarketCap](http://coinmarketcap.com/currencies/bitcoin/)
 ### GPU Power consumption
 Data are from specs or [eXtreme Power Supply Calculator](http://outervision.com/power-supply-calculator).
 
-In our calculation we suppose that the GPU is at its max power consumption.
-Power is usually express in [Watt](https://en.wikipedia.org/wiki/Watt) unit. Voltage has nothing to do here as it's normalized at +12V.
+In our calculation we suppose that the Miner is at its rated max power consumption.
 
 Note: for cloud instances, power consumption is included in the instance price. This section is therefore disabled for cloud mining.
 
