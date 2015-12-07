@@ -15,14 +15,12 @@ Network hashrate & blocktime are calculated over the last 64 blocks from [Etherc
 XBT/USD from [CoinMarketCap](http://coinmarketcap.com/currencies/bitcoin/)
 
 ### GPU Power consumption
-Data are from specs or [eXtreme Power Supply Calculator](http://outervision.com/power-supply-calculator).
-
 In our calculation we suppose that the Miner is at its rated max power consumption.
 
 Note: for cloud instances, power consumption is included in the instance price. This section is therefore disabled for cloud mining.
 
 #### Electricity price
-Adjust to suit your location. This section is disabled for cloud miner selections, as costs are included in hourly prices.
+Adjust to suit your location. This section is also disabled for cloud miner selections as costs are included in hourly prices.
 
 ### ROI
 The card "ROI" doesn't display the [rate](https://en.wikipedia.org/wiki/Return_on_investment) in percentage but rather the exact date when ROI=0.
