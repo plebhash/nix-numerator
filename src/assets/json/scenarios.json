@@ -1,0 +1,31 @@
+[
+  {
+    "title": "Baseline",
+    "roi": {
+      "startDate": "2016-02-10",
+      "startupFixed": 400,
+      "startupPerUnit": 10,
+      "quantity": 1
+    },
+    "electricity": {
+      "price": 0.09
+    },
+    "network": {
+      "diffIncrease": 3,
+      "linearDiff": false,
+      "market": {
+        "price": {
+          "usd": "420.4"
+        }
+      }
+    },
+    "gpu": {
+      "vendor": "BitMain",
+      "name": "S7",
+      "hashrate": 4600,
+      "power": 1400,
+      "price": 1300
+    }
+  }
+]
+
