@@ -213,10 +213,17 @@
      */
     $scope.computeRoi = function () {
       if ($scope.roi.capitalPerUnit) {
-        if ($scope.earnings.tab[1].price > 0)
-          $scope.roi.date = new Date(moment($scope.roi.startDate).add($scope.roi.capitalPerUnit / $scope.earnings.tab[1].price, 'days').calendar());
+        var i=0; 
+        while($scope.earnings.tab[i].roi < 0 && i < $scope.earnings.tab.length -1)
+          i++;
+        if ($scope.earnings.tab[i].roi >= 0)
+          $scope.roi.date = $scope.earnings.tab[i].label;
         else
-          $scope.roi.date = "No break-even date";
+          $scope.roi.date = "N/A";
+      var unplugDate = $scope.earnings.tab[$scope.earnings.tab.length -2];
+      $scope.roi.totalProfit = unplugDate.roi;
+      $scope.roi.percentProfit = $scope.roi.totalProfit / $scope.earnings.tab[0].roi * -100;
+      $scope.roi.annProfit = $scope.roi.percentProfit * 365 / moment(unplugDate.label, "MMM DD YYYY").diff(moment($scope.roi.startDate), 'days');
       }
     };
 
