@@ -88,7 +88,7 @@
     // Currently unused, planned for "period ending: 2016-10-25" style output.
     $scope.relCycleToDate = function (relCycle) {
       var dayOffset = relCycle * 14;
-      var cycleDate = moment($scope.roi.startDate).add(dayOffset, 'days').format("MMM DD");
+      var cycleDate = moment($scope.roi.startDate).add(dayOffset, 'days').format("MMM DD YYYY");
       return cycleDate;
     };
 
