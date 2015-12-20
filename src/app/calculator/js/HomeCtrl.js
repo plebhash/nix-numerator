@@ -94,7 +94,6 @@
       $scope.selectGPU();
       $scope.roi = $scope.user.scenario.roi;
       //$scope.roi.startDate = new Date();
-      console.log($scope.user.scenario.roi.startDate);
       $scope.roi.startDate = new Date(moment($scope.user.scenario.roi.startDate, "YYYY-MM-DD"));
       $scope.electricity = $scope.user.scenario.electricity;
       $scope.network = $scope.user.scenario.network;
