@@ -43,8 +43,10 @@
 
     $scope.earnings = {};
     $scope.electricity = {price: 0.09};
+    $scope.facts = {
+      difficulty: 0,
+    };
     $scope.network = {
-      hashrate: 0,
       diffIncrease: 3,
       linearDiff: false,
       blockTime: 600,
@@ -72,10 +74,10 @@
       // Update init capital
       if ($scope.user.gpu.price) {
         //Get GPU price
-        $scope.roi.capitalPerUnit = getGpuPriceFromEbay($scope.user.gpu.name);
+        $scope.earnings.capitalPerUnit = getGpuPriceFromEbay($scope.user.gpu.name);
         // Failed to get price from ebay
-        if ($scope.roi.capitalPerUnit === 0) {
-          $scope.roi.capitalPerUnit = $scope.user.gpu.price;
+        if ($scope.earnings.capitalPerUnit === 0) {
+          $scope.earnings.capitalPerUnit = $scope.user.gpu.price;
         }
         if ($scope.user.gpu.vendor != "Cloud") {
           $scope.user.electricity = true;
@@ -83,6 +85,20 @@
       }
       // Compute profits
       $scope.computeEnergyCosts();
+    };
+
+    // Triggered after angular changes $scope.user.scenario to selection.
+    $scope.selectScenario = function () {
+      // Is there a race condition in here with the ajaxy loading??.
+      $scope.user.gpu = $scope.gpus[$scope.user.scenario.asic];
+      $scope.selectGPU();
+      $scope.roi = $scope.user.scenario.roi;
+      //$scope.roi.startDate = new Date();
+      console.log($scope.user.scenario.roi.startDate);
+      $scope.roi.startDate = new Date(moment($scope.user.scenario.roi.startDate, "YYYY-MM-DD"));
+      $scope.electricity = $scope.user.scenario.electricity;
+      $scope.network = $scope.user.scenario.network;
+      fillPrices($scope.user.scenario.price);
     };
 
     // Currently unused, planned for "period ending: 2016-10-25" style output.
@@ -106,12 +122,12 @@
       var futureDiff;
       if ($scope.network.linearDiff) {
         diffPower -= 1;
-        futureDiff = $scope.network.difficulty + ($scope.network.difficulty * (preCycles + relCycle) * diffPower);
+        futureDiff = $scope.facts.difficulty + ($scope.facts.difficulty * (preCycles + relCycle) * diffPower);
       } else {
-        futureDiff = $scope.network.difficulty * Math.pow(diffPower, (preCycles + relCycle));
+        futureDiff = $scope.facts.difficulty * Math.pow(diffPower, (preCycles + relCycle));
       }
        // TODO: fix logic for mid-cycle split block reward containing block 420000.
-      var cycleBlock = $scope.network.nowBlock + ((preCycles + relCycle) * 2016);
+      var cycleBlock = $scope.facts.nowBlock + ((preCycles + relCycle) * 2016);
       var reward = 50 * Math.pow(0.5, Math.floor(cycleBlock / 210000));
       var winWait = futureDiff * Math.pow(2,32) / ($scope.user.gpu.hashrate * $scope.roi.quantity * 1e9);
       var blocksPerCycle = 1209600 / winWait; // (60*60*20*14) secs per cycle.
@@ -137,7 +153,7 @@
       var graphData = [];
       var graphBreakEven = [];
       var TotalStartupCost = $scope.roi.startupFixed + ($scope.roi.startupPerUnit * $scope.roi.quantity);
-      var ROI = (($scope.roi.capitalPerUnit * $scope.roi.quantity) + TotalStartupCost) * -1;
+      var ROI = (($scope.earnings.capitalPerUnit * $scope.roi.quantity) + TotalStartupCost) * -1;
       for (var i = 0; i < 150; i++) { //If you can't do it in 6 years...
         var cycleResults = $scope.getCycleProfit(i); 
         ROI += cycleResults.profit;
@@ -184,6 +200,19 @@
     };
 
     /**
+     * Async load of Scenario list
+     */
+    $scope.loadScenarios = function () {
+      $http.get("./assets/json/scenarios.json")
+        .success(function (data) {
+          $scope.scenarios = data;
+        }).error(function (data, status) {
+          console.log("And we just got hit by a " + status + " !!!");
+        });
+      $scope.loadGPUs();
+    };
+
+    /**
      * Convert Watts to KWh for a given time (in hours)
      * @param watts
      * @param hours
@@ -212,7 +241,7 @@
      * Compute ROI
      */
     $scope.computeRoi = function () {
-      if ($scope.roi.capitalPerUnit) {
+      if ($scope.earnings.capitalPerUnit) {
         var i=0; 
         while($scope.earnings.tab[i].roi < 0 && i < $scope.earnings.tab.length -1)
           i++;
@@ -221,9 +250,9 @@
         else
           $scope.roi.date = "N/A";
       var unplugDate = $scope.earnings.tab[$scope.earnings.tab.length -2];
-      $scope.roi.totalProfit = unplugDate.roi;
-      $scope.roi.percentProfit = $scope.roi.totalProfit / $scope.earnings.tab[0].roi * -100;
-      $scope.roi.annProfit = $scope.roi.percentProfit * 365 / moment(unplugDate.label, "MMM DD YYYY").diff(moment($scope.roi.startDate), 'days');
+      $scope.earnings.totalProfit = unplugDate.roi;
+      $scope.earnings.percentProfit = $scope.earnings.totalProfit / $scope.earnings.tab[0].roi * -100;
+      $scope.earnings.annProfit = $scope.earnings.percentProfit * 365 / moment(unplugDate.label, "MMM DD YYYY").diff(moment($scope.roi.startDate), 'days');
       }
     };
 
@@ -290,7 +319,7 @@
     $scope.init = function () {
       $http.get("https://coinmarketcap-nexuist.rhcloud.com/api/btc")
         .success(function (data) {
-          $scope.network.market = data;
+          $scope.facts.market = data;
           fillPrices(data.price);
         }).error(function (data, status) {
           $scope.showSimpleToast("Failed to load Network data from coinmarketcap-nexuist.rhcloud.com :-/");
@@ -299,21 +328,21 @@
         });
       $http.get("https://blockexplorer.com/api/status?q=getDifficulty")
         .success(function (resp) {
-          $scope.network.difficulty = Math.floor(resp.difficulty);
+          $scope.facts.difficulty = Math.floor(resp.difficulty);
         }).error(function (data, status) {
           $scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
           console.log("And we just got hit by a " + status + " HTTP status !!!");
           //DEV
-          $scope.network.blockTime = 1;
-          $scope.network.difficulty = 2;
+          $scope.facts.blockTime = 1;
+          $scope.facts.difficulty = 2;
         });
       $http.get("https://blockexplorer.com/api/status?q=getBlockCount")
         .success(function (resp) {
-          $scope.network.nowBlock = resp.blockcount;
+          $scope.facts.nowBlock = resp.blockcount;
         }).error(function (data, status) {
           $scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
           console.log("And we just got hit by a " + status + " HTTP status !!!");
-          $scope.network.nowBlock = 1;
+          $scope.facts.nowBlock = 1;
         });
     };
 
@@ -331,7 +360,7 @@
      */
     $scope.reset = function () {
       $scope.user = {};
-      fillPrices($scope.network.market.price);
+      fillPrices($scope.facts.market.price);
       $scope.showSimpleToast('Parameters reset');
     };
 
