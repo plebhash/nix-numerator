@@ -18,6 +18,25 @@
       "usd": "420.4"
     },
     "asic": 0
+  },
+  {
+    "title": "Moonshot",
+    "roi": {
+      "startDate": "2016-02-10",
+      "startupFixed": 4000,
+      "startupPerUnit": 110,
+      "quantity": 400
+    },
+    "electricity": {
+      "price": 0.055
+    },
+    "network": {
+      "diffIncrease": 4,
+      "linearDiff": true
+    },
+    "price": {
+      "usd": "650"
+    },
+    "asic": 0
   }
 ]
-
