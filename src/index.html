@@ -219,19 +219,19 @@
           <md-subheader>Earnings Summary</md-subheader>
           <div layout="row" layout-sm="column">
             <div flex>
-              Initial Capital: {{earnings.tab[0].roi | currency:undefined:2}}
+              Initial Capital: {{earnings.tab[0].roi | currency:undefined:0}}
             </div>
             <div flex>
               Break-even: {{roi.date}}
             </div>
             <div flex>
-              Total Profit: <span ng-style="roi.totalProfit < 0 && {'color': 'red'}">{{roi.totalProfit | currency:undefined:2}}</span>
+              Total Profit: <span ng-style="earnings.totalProfit < 0 && {'color': 'red'}">{{earnings.totalProfit | currency:undefined:0}}</span>
             </div>
             <div flex>
-              Annualized ROI %: <span ng-style="roi.annProfit < 0 && {'color': 'red'}">{{roi.annProfit | number:1}}%</span>
+              Annualized ROI: <span ng-style="earnings.annProfit < 0 && {'color': 'red'}">{{earnings.annProfit | number:1}}%</span>
             </div>
             <div flex>
-              Total ROI %: <span ng-style="roi.percentProfit < 0 && {'color': 'red'}">{{roi.percentProfit | number:1}}%</span>
+              Total ROI: <span ng-style="earnings.percentProfit < 0 && {'color': 'red'}">{{earnings.percentProfit | number:1}}%</span>
             </div>
             <div flex>
               Unplug Date: {{earnings.tab[earnings.tab.length -1].label}}

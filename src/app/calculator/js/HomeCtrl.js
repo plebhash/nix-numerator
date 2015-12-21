@@ -91,13 +91,12 @@
     $scope.selectScenario = function () {
       // Is there a race condition in here with the ajaxy loading??.
       $scope.user.gpu = $scope.gpus[$scope.user.scenario.asic];
-      $scope.selectGPU();
       $scope.roi = $scope.user.scenario.roi;
-      //$scope.roi.startDate = new Date();
       $scope.roi.startDate = new Date(moment($scope.user.scenario.roi.startDate, "YYYY-MM-DD"));
       $scope.electricity = $scope.user.scenario.electricity;
       $scope.network = $scope.user.scenario.network;
       fillPrices($scope.user.scenario.price);
+      $scope.selectGPU();
     };
 
     // Currently unused, planned for "period ending: 2016-10-25" style output.
