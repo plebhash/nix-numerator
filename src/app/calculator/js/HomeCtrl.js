@@ -35,6 +35,23 @@
         timeUnit : 'month'
       }
     };
+    $scope.series2 = [{
+      name: 'ROI',
+      color: 'steelblue',
+      data : []
+    }];
+    $scope.options2 = {
+      renderer: 'line',
+      min: 'auto'
+    };
+    $scope.features2 = {
+      yAxis: {
+        tickFormat : 'unrespected value!' //Rickshaw.Fixtures.Number.formatKMBT 
+      },
+      xAxis: {
+        tickFormat : Rickshaw.Fixtures.Number.formatKMBT
+      }
+    };
     // $scope.y_ticks = new Rickshaw.Graph.Axis.Y({
     //   element: document.getElementById('y_axis'),
     //   graph: graph,
@@ -133,10 +150,10 @@
       return coinsPerCycle;
     };
 
-    $scope.getCycleProfit = function (relCycle) {
+    $scope.getCycleProfit = function (relCycle, price) {
       var cycleElec = $scope.user.gpu.costs * 336; // 24*14 hours per cycle.
       var cycleCoins = $scope.cycleEarning(relCycle); 
-      var cycleIncome = cycleCoins * $scope.user.price.usd;
+      var cycleIncome = cycleCoins * price;
       var cycleResults = { coins: cycleCoins, costs: cycleElec, profit: cycleIncome - cycleElec};
       //console.log(cycleResults);
       return cycleResults;
@@ -150,10 +167,11 @@
       $scope.earnings.tab = [];
       var graphData = [];
       var graphBreakEven = [];
-      var TotalStartupCost = $scope.roi.startupFixed + ($scope.roi.startupPerUnit * $scope.roi.quantity);
-      var ROI = (($scope.earnings.capitalPerUnit * $scope.roi.quantity) + TotalStartupCost) * -1;
+      $scope.earnings.totalStartupCost = $scope.roi.startupFixed + ($scope.roi.startupPerUnit * $scope.roi.quantity);
+      $scope.earnings.initialROI = (($scope.earnings.capitalPerUnit * $scope.roi.quantity) + $scope.earnings.totalStartupCost) * -1;
+      var ROI = $scope.earnings.initialROI;
       for (var i = 0; i < 150; i++) { //If you can't do it in 6 years...
-        var cycleResults = $scope.getCycleProfit(i); 
+        var cycleResults = $scope.getCycleProfit(i, $scope.user.price.usd); 
         ROI += cycleResults.profit;
         //output profits.
         $scope.earnings.tab.push({
@@ -182,6 +200,38 @@
 
       // Compute ROI if needed
       $scope.computeRoi();
+      $scope.computeConvexity(240, 800);
+    };
+
+    $scope.computeConvexity = function (priceMin, priceMax) {
+      var graphData = [];
+      var breakEvenPrice;
+      for (var price = priceMin; price <= priceMax; price +=10) {
+        var ROI = $scope.earnings.initialROI;
+          for (var i = 0; i < 150; i++) { //If you can't do it in 6 years...
+          var cycleResults = $scope.getCycleProfit(i, price); 
+          if (cycleResults.profit < 0)
+            break;
+          ROI += cycleResults.profit;
+        }
+        graphData.push({ x: price, y: ROI });
+        if (breakEvenPrice === undefined && ROI > 0) {
+          // only draw the second series once.
+          $scope.series2[1] = {
+            name: 'Break-even',
+            color: 'lightcoral',
+            data: [ { x: price, y: $scope.earnings.initialROI },
+                    { x: price, y: 0 }
+                  ]
+          };
+          breakEvenPrice = price;
+        }
+      }
+      $scope.series2[0] = {
+        name: 'Price Convexity',
+        color:'steelblue',
+        data: graphData
+      };
     };
 
     /**
