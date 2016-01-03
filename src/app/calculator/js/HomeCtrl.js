@@ -16,7 +16,7 @@
       startDate : new Date(),
       startupFixed : 400,
       startupPerUnit : 10,
-      quantity : 1
+      quantity : 20
     };
     $scope.series = [{
       name: 'ROI',
@@ -106,14 +106,47 @@
 
     // Triggered after angular changes $scope.user.scenario to selection.
     $scope.selectScenario = function () {
-      // Is there a race condition in here with the ajaxy loading??.
-      $scope.user.gpu = $scope.gpus[$scope.user.scenario.asic];
+      // If the asic is a number, then index into asics.json array, else
+      // copy the object over directly to the model.
+      if (typeof $scope.user.scenario.asic == 'number') {
+        $scope.user.gpu = $scope.gpus[$scope.user.scenario.asic];
+      } else {
+        $scope.user.gpu = $scope.user.scenario.asic;
+      }
       $scope.roi = $scope.user.scenario.roi;
       $scope.roi.startDate = new Date(moment($scope.user.scenario.roi.startDate, "YYYY-MM-DD"));
       $scope.electricity = $scope.user.scenario.electricity;
       $scope.network = $scope.user.scenario.network;
       fillPrices($scope.user.scenario.price);
       $scope.selectGPU();
+    };
+
+    $scope.saveScenario = function () {
+      var storageItem = localStorage.getItem("cashflow_scenarios");
+      if( storageItem === null )
+        storageItem = "[]";
+      var userScenarios = JSON.parse(storageItem);
+      var title = prompt("Please enter a scenario title", "Scenario 1");
+      var tempRoi = $scope.roi;
+      tempRoi.startDate = moment($scope.roi.startDate).format("YYYY-MM-DD");
+      var currentScenario = {
+        "title": title,
+        "type": "user",
+        "roi": tempRoi,
+        "electricity": $scope.electricity,
+        "network": $scope.network,
+        "price": {
+          "usd": $scope.user.price.usd.toString()
+        },
+        "asic": {
+          "hashrate": $scope.user.gpu.hashrate,
+          "power": $scope.user.gpu.power,
+          "price": $scope.earnings.capitalPerUnit
+        }
+      };
+      userScenarios.push(currentScenario);
+      localStorage.setItem("cashflow_scenarios", JSON.stringify(userScenarios));
+      $scope.myScenarios = userScenarios;
     };
 
     // Currently unused, planned for "period ending: 2016-10-25" style output.
@@ -141,7 +174,7 @@
       } else {
         futureDiff = $scope.facts.difficulty * Math.pow(diffPower, (preCycles + relCycle));
       }
-       // TODO: fix logic for mid-cycle split block reward containing block 420000.
+      // TODO: fix logic for mid-cycle split block reward containing block 420000.
       var cycleBlock = $scope.facts.nowBlock + ((preCycles + relCycle) * 2016);
       var reward = 50 * Math.pow(0.5, Math.floor(cycleBlock / 210000));
       var winWait = futureDiff * Math.pow(2,32) / ($scope.user.gpu.hashrate * $scope.roi.quantity * 1e9);
@@ -183,8 +216,8 @@
         var graphX = $scope.relCycleToEpoch(i);
         graphData.push({x:graphX, y:ROI});
         graphBreakEven.push({x:graphX, y:0});
-       if (cycleResults.profit < 0)
-         break;
+        if (cycleResults.profit < 0)
+          break;
       }
 
       $scope.series[0] = {
@@ -208,7 +241,7 @@
       var breakEvenPrice;
       for (var price = priceMin; price <= priceMax; price +=10) {
         var ROI = $scope.earnings.initialROI;
-          for (var i = 0; i < 150; i++) { //If you can't do it in 6 years...
+        for (var i = 0; i < 150; i++) { //If you can't do it in 6 years...
           var cycleResults = $scope.getCycleProfit(i, price); 
           if (cycleResults.profit < 0)
             break;
@@ -221,8 +254,8 @@
             name: 'Break-even',
             color: 'lightcoral',
             data: [ { x: price, y: $scope.earnings.initialROI },
-                    { x: price, y: 0 }
-                  ]
+            { x: price, y: 0 }
+            ]
           };
           breakEvenPrice = price;
         }
@@ -251,9 +284,13 @@
      * Async load of Scenario list
      */
     $scope.loadScenarios = function () {
+      var storageItem = localStorage.getItem("cashflow_scenarios");
+      if( storageItem === null )
+        storageItem = "[]";
+      $scope.scenarios = JSON.parse(storageItem); 
       $http.get("./assets/json/scenarios.json")
         .success(function (data) {
-          $scope.scenarios = data;
+            $scope.scenarios = $scope.scenarios.concat(data);
         }).error(function (data, status) {
           console.log("And we just got hit by a " + status + " !!!");
         });
@@ -294,13 +331,18 @@
         while($scope.earnings.tab[i].roi < 0 && i < $scope.earnings.tab.length -1)
           i++;
         if ($scope.earnings.tab[i].roi >= 0)
-          $scope.roi.date = $scope.earnings.tab[i].label;
+          $scope.earnings.roiDate = $scope.earnings.tab[i].label;
         else
-          $scope.roi.date = "N/A";
-      var unplugDate = $scope.earnings.tab[$scope.earnings.tab.length -2];
-      $scope.earnings.totalProfit = unplugDate.roi;
-      $scope.earnings.percentProfit = $scope.earnings.totalProfit / $scope.earnings.tab[0].roi * -100;
-      $scope.earnings.annProfit = $scope.earnings.percentProfit * 365 / moment(unplugDate.label, "MMM DD YYYY").diff(moment($scope.roi.startDate), 'days');
+          $scope.earnings.roiDate = "N/A";
+        var unplugDate;
+        if ($scope.earnings.tab.length > 1) {
+          unplugDate = $scope.earnings.tab[$scope.earnings.tab.length -2];
+        } else {
+          unplugDate = $scope.earnings.tab[$scope.earnings.tab.length -1];
+        }
+        $scope.earnings.totalProfit = unplugDate.roi;
+        $scope.earnings.percentProfit = $scope.earnings.totalProfit / $scope.earnings.tab[0].roi * -100;
+        $scope.earnings.annProfit = $scope.earnings.percentProfit * 365 / moment(unplugDate.label, "MMM DD YYYY").diff(moment($scope.roi.startDate), 'days');
       }
     };
 
@@ -335,15 +377,15 @@
     /**
      * Get all useful data
      */
-      // TODO: refactor get requests into function call.
-      //
-      // function multiCall(requests) {
-      //   for (var i=0; i <requests.length; i++) {
-      //     var request = requests[i];
-      //     $http.get(request.url)
-      //       .success(function (data) {
-      //         $scope.network[request.field] = data;
-      //         fillPrices(data.price);
+    // TODO: refactor get requests into function call.
+    //
+    // function multiCall(requests) {
+    //   for (var i=0; i <requests.length; i++) {
+    //     var request = requests[i];
+    //     $http.get(request.url)
+    //       .success(function (data) {
+    //         $scope.network[request.field] = data;
+    //         fillPrices(data.price);
       //
       //       }).error(function (data, status) {
       //         $scope.showSimpleToast("Failed to load Network data from " + request.url);
@@ -372,7 +414,6 @@
         }).error(function (data, status) {
           $scope.showSimpleToast("Failed to load Network data from coinmarketcap-nexuist.rhcloud.com :-/");
           console.log("And we just got hit by a " + status + " !!!");
-          $scope.user.price.usd = 0;
         });
       $http.get("https://blockexplorer.com/api/status?q=getDifficulty")
         .success(function (resp) {
@@ -381,8 +422,7 @@
           $scope.showSimpleToast("Failed to load Network data from blockexplorer.com :-/");
           console.log("And we just got hit by a " + status + " HTTP status !!!");
           //DEV
-          $scope.facts.blockTime = 1;
-          $scope.facts.difficulty = 2;
+          $scope.facts.difficulty = 103880340815;
         });
       $http.get("https://blockexplorer.com/api/status?q=getBlockCount")
         .success(function (resp) {

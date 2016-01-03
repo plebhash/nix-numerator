@@ -1,9 +1,10 @@
 [
   {
     "title": "Baseline",
+    "type": "vendor",
     "roi": {
       "startDate": "2016-02-10",
-      "startupFixed": 20,
+      "startupFixed": 200,
       "startupPerUnit": 110,
       "quantity": 20
     },
@@ -15,12 +16,13 @@
       "linearDiff": true
     },
     "price": {
-      "usd": "420.4"
+      "usd": "420"
     },
     "asic": 0
   },
   {
     "title": "Moonshot",
+    "type": "vendor",
     "roi": {
       "startDate": "2016-02-10",
       "startupFixed": 4000,
@@ -35,7 +37,7 @@
       "linearDiff": true
     },
     "price": {
-      "usd": "650"
+      "usd": "660"
     },
     "asic": 0
   }

@@ -56,13 +56,21 @@
             <md-input-container flex>
               <md-select placeholder="Load a Scenario" ng-model="user.scenario" md-on-open="loadScenarios()"
                          ng-change="selectScenario()">
-                <md-optgroup label="Scenarios">
-                  <md-option ng-value="scenario" ng-repeat="scenario in scenarios">
+                <md-optgroup label="Example Scenarios">
+                  <md-option ng-value="scenario" ng-repeat="scenario in scenarios | filter: {type: 'vendor' }">
+                    {{scenario.title}}
+                  </md-option>
+                </md-optgroup>
+                <md-optgroup label="Saved Scenarios">
+                  <md-option ng-value="scenario" ng-repeat="scenario in scenarios | filter: {type: 'user' }">
                     {{scenario.title}}
                   </md-option>
                 </md-optgroup>
               </md-select>
             </md-input-container>
+            <div class="md-actions" layout="row" layout-align="end center">
+              <md-button class="md-raised" ng-click="saveScenario()">Save Scenario</md-button>
+            </div>
         </md-card-content>
       </md-card>
       <md-card>
@@ -99,7 +107,7 @@
             <!-- Number of units-->
             <md-input-container flex>
               <label>Number of units</label>
-              <input type="number" min="1" step="20" ng-model="roi.quantity"
+              <input type="number" min="0" step="20" ng-model="roi.quantity"
                      ng-change="computeEnergyCosts(); computeProfits()">
             </md-input-container>
             <md-input-container flex>
@@ -113,7 +121,7 @@
             <!-- Hashrate-->
             <md-input-container flex>
               <label>Hashrate per unit (GH)</label>
-              <input type="number" min="0" max="9999999" step="50" name="hashrate"
+              <input type="number" min="0" max="1000000" step="50" name="hashrate"
                      ng-model="user.gpu.hashrate"
                      required ng-change="computeEnergyCosts(); computeProfits();">
               <!-- <div ng-messages="calculatorForm.hashrate.$error" -->
@@ -235,7 +243,7 @@
               Initial Capital: {{earnings.tab[0].roi | currency:undefined:0}}
             </div>
             <div flex>
-              Break-even: {{roi.date}}
+              Break-even: {{earnings.roiDate}}
             </div>
             <div flex>
               Total Profit: <span ng-style="earnings.totalProfit < 0 && {'color': 'red'}">{{earnings.totalProfit | currency:undefined:0}}</span>
