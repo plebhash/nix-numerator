@@ -2,7 +2,8 @@ html, body {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     height: 100%;
-    margin: 0px;
+    max-width: 1174px;
+    margin: auto;
     padding: 0px;
 }
 
