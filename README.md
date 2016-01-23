@@ -3,7 +3,7 @@
 Calculate mining profitability given various equipment and network assumptions.
 
 ## Mining inception
-Yo Dawg! I heard you like forks, so I forked your fork of an ethereum mining calculator! This was due to the poor state of bitcoin calculators available :sadface:
+Yo Dawg! I heard you like forks, so I forked your fork of an ethereum mining calculator! This was due to the poor state of bitcoin calculators available :weary:.
 The original can be found [here](https://github.com/anthonygraignic/ethereum-mining-calculator).
 
 ## Live version
