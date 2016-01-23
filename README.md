@@ -4,6 +4,7 @@ Calculate mining profitability given various equipment and network assumptions.
 
 ## Mining inception
 Yo Dawg! I heard you like forks, so I forked your fork of an ethereum mining calculator! This was due to the poor state of bitcoin calculators available :weary:.
+
 The original can be found [here](https://github.com/anthonygraignic/ethereum-mining-calculator).
 
 ## Live version
@@ -11,6 +12,8 @@ NOT LIVE YET. DONT CLICK!
 [https://decentralvan.github.io/numerator](Github hosted snapshot here).
 
 ## Local Development Install
+Requires `npm`, `bower` & `gulp` to be globally installed for CLI use.
+
 ```
 git clone https://github.com/DecentralVan/numerator.git
 cd numerator
@@ -21,22 +24,22 @@ gulp serve
 ```
 
 ## Usage
-First, choose a starting scenario (group of assumptions).
-Second, choose a miner model from the dropdown [list](app/assets/json/asics.json) to have some performance numbers populated automatically.
-Third, set your local parameters such as electricity prices and startup costs. The graphs update in realtime.
-Fourth, click _Save Scenario_ to save the numbers in browser local-storage for later recall, these will survive a browser restart and should be available to select from the scenario menu.
+- First, choose a starting scenario (group of assumptions).
+- Second, choose a miner model from the dropdown [list](app/assets/json/asics.json) to have some performance numbers populated automatically.
+- Third, set your local parameters such as electricity prices and startup costs. The graphs update in realtime.
+- Fourth, click _Save Scenario_ to save the numbers in browser local-storage for later recall, these will survive a browser restart and should be available to select from the scenario menu.
 
 If your miner is not in the list ~~you're probably going to lose money~~, open an issue or preferably add the specs directly to [the list](https://github.com/DecentralVan/numerator/blob/bitcoin/src/assets/json/asics.json) via a pull request. If the brand is not already shown, this may require also adding a new menu filter in the html menu [here](https://github.com/DecentralVan/numerator/blob/bitcoin/src/index.html).
 
 ## Features
 
-ROI chart: This shows the overall return on investment (y axis) until the first cash-flow-negative cycle.
-Profit convexity chart: This shows final ROI (y axis) across a range of possible average bitcoin prices.
+- ROI chart: This shows the overall return on investment (y axis) until the first cash-flow-negative cycle.
+- Profit convexity chart: This shows final ROI (y axis) across a range of possible average bitcoin prices.
 
 ### External Network Requests
-Block height from [blockexplorer.com](https://blockexplorer.com/api/status?q=getBlockCount).
-Difficulty from [blockexplorer.com](https://blockexplorer.com/api/status?q=getDifficulty).
-XBT/USD from [coinmarketcap.com](https://coinmarketcap-nexuist.rhcloud.com/api/btc)
+- Block height from [blockexplorer.com](https://blockexplorer.com/api/status?q=getBlockCount).
+- Difficulty from [blockexplorer.com](https://blockexplorer.com/api/status?q=getDifficulty).
+- XBT/USD from [coinmarketcap.com](https://coinmarketcap-nexuist.rhcloud.com/api/btc)
 
 # Original author(s) notes
 
