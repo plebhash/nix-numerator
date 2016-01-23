@@ -1,43 +1,48 @@
-# Mining Calculator
-Calculate your mining profitability based on network and performance parameters.
+# Numerator
+### A better bitcoin mining calculator.
+Calculate mining profitability given various equipment and network assumptions.
 
-First choose a miner model from the dropdown [list](app/assets/json/asics.json) and let the magic happen!
+## Mining inception
+Yo Dawg! I heard you like forks, so I forked your fork of an ethereum mining calculator! This was due to the poor state of bitcoin calculators available :sadface:
+The original can be found [here](https://github.com/anthonygraignic/ethereum-mining-calculator).
 
-To enjoy all the features, we recommend that you select your GPU.
-If your GPU is not in the list, open an issue or post it on [GPU Mining bench scores](http://forum.ethereum.org/discussion/2134/gpu-mining-is-out-come-and-let-us-know-of-your-bench-scores).
+## Live version
+NOT LIVE YET. DONT CLICK!
+[https://decentralvan.github.io/numerator](Github hosted snapshot here).
 
+## Local Development Install
+```
+git clone https://github.com/DecentralVan/numerator.git
+cd numerator.git
+npm install
+bower install
+cp bower_components/rickshaw/{package,bower}.json
+gulp serve
+```
+
+## Usage
+First, choose a starting scenario (group of assumptions).
+Second, choose a miner model from the dropdown [list](app/assets/json/asics.json) to have some performance numbers populated automatically.
+Third, set your local parameters such as electricity prices and startup costs. The graphs update in realtime.
+Fourth, click _Save Scenario_ to save the numbers in browser local-storage for later recall, these will survive a browser restart and should be available to select from the scenario menu.
+
+If your miner is not in the list ~~you're probably going to lose money~~, open an issue or preferably add the specs directly to [the list](https://github.com/DecentralVan/numerator/blob/bitcoin/src/assets/json/asics.json) via a pull request. If the brand is not already shown, this may require also adding a new menu filter in the html menu [here](https://github.com/DecentralVan/numerator/blob/bitcoin/src/index.html).
 
 ## Features
-### Network stats
-Network hashrate & blocktime are calculated over the last 64 blocks from [Etherchain.org](https://etherchain.org/api/basic_stats)
 
-### Price calculation
-XBT/USD from [CoinMarketCap](http://coinmarketcap.com/currencies/bitcoin/)
+ROI chart: This shows the overall return on investment (y axis) until the first cash-flow-negative cycle.
+Profit convexity chart: This shows final ROI (y axis) across a range of possible average bitcoin prices.
 
-### GPU Power consumption
-In our calculation we suppose that the Miner is at its rated max power consumption.
+### External Network Requests
+Block height from [blockexplorer.com](https://blockexplorer.com/api/status?q=getBlockCount).
+Difficulty from [blockexplorer.com](https://blockexplorer.com/api/status?q=getDifficulty).
+XBT/USD from [coinmarketcap.com](https://coinmarketcap-nexuist.rhcloud.com/api/btc)
 
-Note: for cloud instances, power consumption is included in the instance price. This section is therefore disabled for cloud mining.
+# Original author(s) notes
 
-#### Electricity price
-Adjust to suit your location. This section is also disabled for cloud miner selections as costs are included in hourly prices.
-
-### ROI
-The simulation ends after the first non-profitable cycle or 6 years, whichever is the sooner.
-
-## Todo
-* Average network stats on more blocks (>64) to get stable value
-* Possibility to choose several GPU for designing a mining rig ([Chips?](https://material.angularjs.org/latest/#/demo/material.components.chips))
-* Import script from sheet
-* Charts
-* Get GPU card's price from Ebay
-* Use $watch (problems with undefined values :-/)
-
-## Build
+## Build tools
 This project was built on the [starter Angular Material project](https://github.com/angular/material-start) and took some cool stuff from this [Yeoman Gulp generator](https://github.com/Swiip/generator-gulp-angular).
 Files present in the gh-pages branch are generated using gulp and the ``build`` task. Generated files can be found in dist folder.
-
-Just get dependencies with ``npm install && bower install``
 
 ## Credits
 * [Badmofo](https://github.com/badmofo/ethereum-mining-calculator) for starting this calculator.
