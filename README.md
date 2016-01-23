@@ -13,7 +13,7 @@ NOT LIVE YET. DONT CLICK!
 ## Local Development Install
 ```
 git clone https://github.com/DecentralVan/numerator.git
-cd numerator.git
+cd numerator
 npm install
 bower install
 cp bower_components/rickshaw/{package,bower}.json
