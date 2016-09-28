@@ -8,8 +8,7 @@ Yo Dawg! I heard you like forks, so I forked your fork of an ethereum mining cal
 The original can be found [here](https://github.com/anthonygraignic/ethereum-mining-calculator).
 
 ## Live version
-NOT LIVE YET. DONT CLICK!
-[https://decentralvan.github.io/numerator](Github hosted snapshot here).
+[Github hosted snapshot here](https://decentralvan.github.io/numerator/).
 
 ## Local Development Install
 Requires `npm`, `bower` & `gulp` to be globally installed for CLI use.
