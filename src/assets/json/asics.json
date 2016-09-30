@@ -1,6 +1,14 @@
 [
   {
     "vendor": "BitMain",
+    "name": "S9",
+    "os": "",
+    "hashrate": 12800,
+    "power": 1400,
+    "price": 1400
+  },
+  {
+    "vendor": "BitMain",
     "name": "S7",
     "os": "",
     "hashrate": 4600,
