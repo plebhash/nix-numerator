@@ -1,34 +1,15 @@
-# Numerator
-### A better bitcoin mining calculator.
+# nix-numerator
 Calculate mining profitability given various equipment and network assumptions.
 
-## Mining inception
-Yo Dawg! I heard you like forks, so I forked your fork of an ethereum mining calculator! This was due to the poor state of bitcoin calculators available :weary:.
-
-The original can be found [here](https://github.com/anthonygraignic/ethereum-mining-calculator).
-
 ## Live version
-[Github hosted snapshot here](https://decentralvan.github.io/numerator/).
+https://todo
 
-## Local Development Install
-Requires `npm`, `bower` & `gulp` to be globally installed for CLI use.
-
+## Nix
 ```
-git clone https://github.com/DecentralVan/numerator.git
-cd numerator
-npm install
-bower install
-cp bower_components/rickshaw/{package,bower}.json
-gulp serve
+$ git clone https://github.com/plebhash/nix-numerator
+$ NIXPKGS_ALLOW_INSECURE=1 nix-build # todo: fix the need for this flag
+$ // todo: start the numerator service
 ```
-
-## Usage
-- First, choose a starting scenario (group of assumptions).
-- Second, choose a miner model from the dropdown [list](app/assets/json/asics.json) to have some performance numbers populated automatically.
-- Third, set your local parameters such as electricity prices and startup costs. The graphs update in realtime.
-- Fourth, click _Save Scenario_ to save the numbers in browser local-storage for later recall, these will survive a browser restart and should be available to select from the scenario menu.
-
-If your miner is not in the list ~~you're probably going to lose money~~, open an issue or preferably add the specs directly to [the list](https://github.com/DecentralVan/numerator/blob/bitcoin/src/assets/json/asics.json) via a pull request. If the brand is not already shown, this may require also adding a new menu filter in the html menu [here](https://github.com/DecentralVan/numerator/blob/bitcoin/src/index.html).
 
 ## Features
 
@@ -43,12 +24,15 @@ If your miner is not in the list ~~you're probably going to lose money~~, open a
 # Original author(s) notes
 
 ## Build tools
-This project was built on the [starter Angular Material project](https://github.com/angular/material-start) and took some cool stuff from this [Yeoman Gulp generator](https://github.com/Swiip/generator-gulp-angular).
+
+[`node2nix`](https://github.com/svanderburg/node2nix) is used to generate a `nix` environment from the `nodeJS` project structure.
+
+The inner nix-env is built on the [starter Angular Material project](https://github.com/angular/material-start) and took some cool stuff from this [Yeoman Gulp generator](https://github.com/Swiip/generator-gulp-angular).
 Files present in the gh-pages branch are generated using gulp and the ``build`` task. Generated files can be found in dist folder.
 
 ## Credits
 * [Badmofo](https://github.com/badmofo/ethereum-mining-calculator) for starting this calculator.
-* [GPU Mining bench scores](http://forum.ethereum.org/discussion/2134/gpu-mining-is-out-come-and-let-us-know-of-your-bench-scores)
+* [findkiko](https://github.com/findkiko/numerator) for forking `Badmofo`.
 
 Others calculators:
 
